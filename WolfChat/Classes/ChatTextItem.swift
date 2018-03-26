@@ -67,30 +67,30 @@ open class ChatTextCell: ChatCell {
         super.setup()
     }
 
-    private var textMessage: ChatTextItem {
+    private var textItem: ChatTextItem {
         return item as! ChatTextItem
     }
 
     private lazy var containerView = View()
 
     private var frameView: View {
-        return textMessage.frameView
+        return textItem.frameView
     }
 
     private var label: Label {
-        return textMessage.label
+        return textItem.label
     }
 
     private var textInsets: UIEdgeInsets {
-        return textMessage.style.textInsets
+        return textItem.style.textInsets
     }
 
     private var shapeInsets: UIEdgeInsets {
-        return textMessage.style.shapeInsets
+        return textItem.style.shapeInsets
     }
 
-    open override func syncToMessage() {
-        super.syncToMessage()
+    open override func syncToItem() {
+        super.syncToItem()
 
         stackView.removeAllSubviews()
         stackView => [

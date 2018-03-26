@@ -9,10 +9,10 @@ import WolfCore
 
 open class ChatCell: CollectionViewCell {
     public var item: ChatItem! {
-        didSet { syncToMessage() }
+        didSet { syncToItem() }
     }
 
-    open func syncToMessage() {
+    open func syncToItem() {
     }
 
     private(set) lazy var stackView = HorizontalStackView()
