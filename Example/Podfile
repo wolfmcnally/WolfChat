@@ -1,11 +1,12 @@
+platform :ios, '11.0'
 use_frameworks!
 
 target 'WolfChat_Example' do
   pod 'WolfChat', :path => '../'
+  # pod 'WolfCore', '~> 2.1'
+  pod 'WolfCore', :path => '../../WolfCore/'
 
   target 'WolfChat_Tests' do
     inherit! :search_paths
-
-    
   end
 end
