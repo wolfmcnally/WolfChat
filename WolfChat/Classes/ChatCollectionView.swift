@@ -41,6 +41,7 @@ class ChatCollectionView: CollectionView {
     override func setup() {
         dataSource = self
         delegate = self
+        endsEditingWhenTapped = true
         layout.invalidateLayout()
     }
 

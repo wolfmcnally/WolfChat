@@ -7,8 +7,35 @@
 
 import WolfCore
 
+private func makeSendButtonImage() -> UIImage {
+    let width: CGFloat = 26
+    let size = CGSize(width: width, height: width)
+    return newImage(withSize: size, renderingMode: .alwaysTemplate) { context in
+        context.fillEllipse(in: size.bounds)
+    }
+}
+
 class ChatInputBar: View {
-    private lazy var placeholderView = PlaceholderView()
+    private lazy var backgroundView = View() • { 🍒 in
+        let effectsView = ‡UIVisualEffectView(effect: UIBlurEffect(style: .light))
+        self => [
+            effectsView
+        ]
+        effectsView.constrainFrameToFrame()
+    }
+
+    private lazy var frameView = FrameView() • { 🍒 in
+        🍒.style = .rounded(cornerRadius: 15)
+        🍒.color = try! UIColor(string: "#C7C7CC")
+        🍒.backgroundColor = .white
+        //🍒.backgroundColor = UIColor.blue.withAlphaComponent(0.2)
+    }
+
+    private lazy var sendButtonImage = makeSendButtonImage()
+
+    private lazy var sendButton = Button() • { 🍒 in
+        🍒.setImage(self.sendButtonImage, for: [])
+    }
 
     private lazy var font = UIFont.systemFont(ofSize: 15)
     private lazy var lineHeight = ceil(font.lineHeight)
@@ -25,24 +52,33 @@ class ChatInputBar: View {
 
     private lazy var textView = MyTextView() • { 🍒 in
         🍒.delegate = self
-        🍒.backgroundColor = UIColor.red.lightened(by: 0.8)
         🍒.font = font
         🍒.text = "Hello, world!"
         🍒.isScrollEnabled = false
+        //🍒.backgroundColor = UIColor.red.withAlphaComponent(0.2)
     }
 
     private var heightConstraint = Constraints()
-    private var textInsets = UIEdgeInsets(all: 10)
+    private var frameInsets = UIEdgeInsets(all: 4)
+    private var textInsets = UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 40)
 
     override func setup() {
         self => [
-            placeholderView,
-            textView
+            backgroundView,
+            frameView,
+            textView,
+            sendButton
         ]
 
-        placeholderView.constrainFrameToFrame()
+        backgroundView.constrainFrameToFrame()
+        frameView.constrainFrameToFrame(insets: CGInsets(edgeInsets: frameInsets))
         textView.constrainFrameToFrame(insets: CGInsets(edgeInsets: textInsets))
         heightConstraint = textView.constrainHeight(to: lineHeight)
+
+        Constraints(
+            sendButton.trailingAnchor == frameView.trailingAnchor - 4,
+            sendButton.bottomAnchor == frameView.bottomAnchor - 4
+        )
     }
 
     override func layoutSubviews() {

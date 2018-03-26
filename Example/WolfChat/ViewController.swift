@@ -23,8 +23,8 @@ class ViewController: UIViewController {
 
     var itemQueue = Queue<ChatItem>()
 
-    private lazy var sentFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#3FACFD"), shape: .bubble(18, .right))
-    private lazy var receivedFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#E5E5EA"), shape: .bubble(18, .left))
+    private lazy var sentFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#3FACFD"), shape: .bubble(cornerRadius: 18, tailCorner: .right))
+    private lazy var receivedFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#E5E5EA"), shape: .bubble(cornerRadius: 18, tailCorner: .left))
 
     private lazy var messageTextInsets = UIEdgeInsets(horizontal: 8, vertical: 4)
     let widthFrac: CGFrac = 0.7
@@ -68,13 +68,13 @@ class ViewController: UIViewController {
     }
 
     private func addSentTextItem() {
-        let sentText = Lorem.sentences(2)
+        let sentText = Lorem.sentences(2, emojisFrac: 0.1)
         let sentItem = makeSentItem(text: sentText)
         itemQueue.enqueue(sentItem)
     }
 
     private func addReceivedTextItem() {
-        let receivedText = Lorem.sentences(2)
+        let receivedText = Lorem.sentences(2, emojisFrac: 0.1)
         let receivedItem = makeReceivedItem(text: receivedText)
         itemQueue.enqueue(receivedItem)
     }

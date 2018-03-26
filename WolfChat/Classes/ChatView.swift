@@ -9,7 +9,6 @@ import WolfCore
 
 public class ChatView: View {
     private lazy var keyboardAvoidantView = KeyboardAvoidantView()
-    private lazy var stackView = VerticalStackView()
     private lazy var collectionView = ChatCollectionView()
     private lazy var inputBarView = ChatInputBar()
 
@@ -33,14 +32,25 @@ public class ChatView: View {
     public override func setup() {
         self => [
             keyboardAvoidantView => [
-                stackView => [
-                    collectionView,
-                    inputBarView
-                ]
+                collectionView,
+                inputBarView
             ]
         ]
 
         keyboardAvoidantView.constrainFrameToFrame(priority: .defaultHigh)
-        stackView.constrainFrameToFrame()
+        collectionView.constrainFrameToFrame()
+        Constraints(
+            inputBarView.leadingAnchor == keyboardAvoidantView.leadingAnchor,
+            inputBarView.trailingAnchor == keyboardAvoidantView.trailingAnchor,
+            inputBarView.bottomAnchor == keyboardAvoidantView.bottomAnchor
+        )
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+
+        inputBarView.layoutIfNeeded()
+        let height = inputBarView.frame.height
+        collectionView.contentInset.bottom = height
     }
 }

@@ -9,8 +9,8 @@ import WolfCore
 
 public enum ChatFrameShape {
     case rectangle
-    case roundedCorners(CGFloat)
-    case bubble(CGFloat, TailCorner)
+    case rounded(cornerRadius: CGFloat)
+    case bubble(cornerRadius: CGFloat, tailCorner: TailCorner)
 
     public enum TailCorner {
         case left
@@ -98,7 +98,7 @@ public enum ChatFrameShape {
         switch self {
         case .rectangle:
             return UIBezierPath(rect: rect)
-        case .roundedCorners(let cornerRadius):
+        case .rounded(let cornerRadius):
             return makeRoundedCornersPath(in: rect, cornerRadius: cornerRadius)
         case .bubble(let cornerRadius, let tailCorner):
             return makeBubblePath(in: rect, cornerRadius: cornerRadius, tailCorner: tailCorner)
@@ -109,7 +109,7 @@ public enum ChatFrameShape {
         switch self {
         case .rectangle:
             return .zero
-        case .roundedCorners(let cornerRadius):
+        case .rounded(let cornerRadius):
             return UIEdgeInsets(all: sqrt(cornerRadius))
         case .bubble(let cornerRadius, let tailCorner):
             let r = sqrt(cornerRadius)
