@@ -16,12 +16,12 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        chatView.register(messageClass: ChatPlaceholderMessage.self)
-        chatView.register(messageClass: ChatTextMessage.self)
+        chatView.register(messageClass: ChatPlaceholderItem.self)
+        chatView.register(messageClass: ChatTextItem.self)
         chatView.margins = UIEdgeInsets(all: 10)
     }
 
-    var messageQueue = Queue<ChatMessage>()
+    var itemQueue = Queue<ChatItem>()
 
     private lazy var sentFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#3FACFD"), shape: .bubble(18, .right))
     private lazy var receivedFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#E5E5EA"), shape: .bubble(18, .left))
@@ -29,8 +29,8 @@ class ViewController: UIViewController {
     private lazy var messageTextInsets = UIEdgeInsets(horizontal: 8, vertical: 4)
     let widthFrac: CGFrac = 0.7
 
-    private lazy var sentMessageStyle = ChatTextMessageStyle(textInsets: messageTextInsets, widthFrac: widthFrac, frameStyle: sentFrameStyle)
-    private lazy var receivedMessageStyle = ChatTextMessageStyle(textInsets: messageTextInsets, widthFrac: widthFrac, frameStyle: receivedFrameStyle)
+    private lazy var sentItemStyle = ChatTextItemStyle(textInsets: messageTextInsets, widthFrac: widthFrac, frameStyle: sentFrameStyle)
+    private lazy var receivedItemStyle = ChatTextItemStyle(textInsets: messageTextInsets, widthFrac: widthFrac, frameStyle: receivedFrameStyle)
 
     private lazy var messageFont = UIFont.systemFont(ofSize: 15)
 //    private lazy var messageFont = UIFont.systemFont(ofSize: 24)
@@ -45,52 +45,67 @@ class ViewController: UIViewController {
         .foregroundColor: UIColor.black
     ]
 
-    private func makeSentMessage(text: String) -> ChatTextMessage {
+    private func makeSentItem(text: String) -> ChatTextItem {
         let t = text§
         t.setAttributes(sentTextAttributes)
-        var message = ChatTextMessage(text: t, style: sentMessageStyle)
-        message.alignment = .right
-        return message
+        var item = ChatTextItem(text: t, style: sentItemStyle)
+        item.alignment = .right
+        return item
     }
 
-    private func makeReceivedMessage(text: String) -> ChatTextMessage {
+    private func makeReceivedItem(text: String) -> ChatTextItem {
         let t = text§
         t.setAttributes(receivedTextAttributes)
-        var message = ChatTextMessage(text: t, style: receivedMessageStyle)
-        message.alignment = .left
-        return message
+        var item = ChatTextItem(text: t, style: receivedItemStyle)
+        item.alignment = .left
+        return item
+    }
+
+    private func addPlaceholderItem(alignment: ChatItemAlignment) {
+        var item = ChatPlaceholderItem()
+        item.alignment = alignment
+        itemQueue.enqueue(item)
+    }
+
+    private func addSentTextItem() {
+        let sentText = Lorem.sentences(2)
+        let sentItem = makeSentItem(text: sentText)
+        itemQueue.enqueue(sentItem)
+    }
+
+    private func addReceivedTextItem() {
+        let receivedText = Lorem.sentences(2)
+        let receivedItem = makeReceivedItem(text: receivedText)
+        itemQueue.enqueue(receivedItem)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        var placeholderMessage = ChatPlaceholderMessage()
-        messageQueue.enqueue(placeholderMessage)
-        placeholderMessage.alignment = .left
-        messageQueue.enqueue(placeholderMessage)
-        placeholderMessage.alignment = .center
-        messageQueue.enqueue(placeholderMessage)
-        placeholderMessage.alignment = .right
-        messageQueue.enqueue(placeholderMessage)
+        addPlaceholderItem(alignment: .right)
+        addPlaceholderItem(alignment: .left)
+        addPlaceholderItem(alignment: .center)
+        addPlaceholderItem(alignment: .right)
 
-        let sentText = Lorem.sentences(2)
-        let sentMessage = makeSentMessage(text: sentText)
-        messageQueue.enqueue(sentMessage)
-
-        let receivedText = Lorem.sentences(2)
-        let receivedMessage = makeReceivedMessage(text: receivedText)
-        messageQueue.enqueue(receivedMessage)
+        addSentTextItem()
+        addReceivedTextItem()
+        addSentTextItem()
+        addReceivedTextItem()
+        addSentTextItem()
+        addReceivedTextItem()
 
         dispatchOnMain(afterDelay: 0.5) {
-            self.dispatchNextMessage()
+            self.addNextItem()
         }
     }
 
-    private func dispatchNextMessage() {
-        guard let message = messageQueue.dequeue() else { return }
-        chatView.addMessage(message, animated: true)
-        dispatchOnMain(afterDelay: 0.1) {
-            self.dispatchNextMessage()
+    private func addNextItem() {
+        guard let item = itemQueue.dequeue() else { return }
+        let indexPath = chatView.addItem(item, animated: true)
+        chatView.scrollToItem(at: indexPath, at: .centeredVertically, animated: true)
+
+        dispatchOnMain(afterDelay: 0.5) {
+            self.addNextItem()
         }
     }
 }

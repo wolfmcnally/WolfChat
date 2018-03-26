@@ -1,5 +1,5 @@
 //
-//  ChatTextMessage.swift
+//  ChatTextItem.swift
 //  WolfChat
 //
 //  Created by Wolf McNally on 3/22/18.
@@ -7,7 +7,7 @@
 
 import WolfCore
 
-public struct ChatTextMessageStyle {
+public struct ChatTextItemStyle {
     public let textInsets: UIEdgeInsets
     public let widthFrac: CGFrac
     public let frameStyle: ChatFrameStyle
@@ -23,14 +23,14 @@ public struct ChatTextMessageStyle {
     }
 }
 
-public struct ChatTextMessage: ChatMessage {
-    public static let reuseIdentifier = "com.wolfmcnally.ChatText"
+public struct ChatTextItem: ChatItem {
+    public static let defaultReuseIdentifier = "com.wolfmcnally.ChatText"
     public static let cellClass: AnyClass = ChatTextCell.self
 
     public let text: NSAttributedString
-    public let style: ChatTextMessageStyle
+    public let style: ChatTextItemStyle
 
-    public init(text: NSAttributedString, style: ChatTextMessageStyle) {
+    public init(text: NSAttributedString, style: ChatTextItemStyle) {
         self.text = text
         self.style = style
         label.attributedText = text
@@ -55,16 +55,20 @@ public struct ChatTextMessage: ChatMessage {
         return cellSize
     }
 
-    public var alignment: ChatMessageAlignment = .right
+    public var alignment: ChatItemAlignment = .right
 }
 
 open class ChatTextCell: ChatCell {
     open override var reuseIdentifier: String? {
-        return ChatPlaceholderMessage.reuseIdentifier
+        return ChatTextItem.defaultReuseIdentifier
     }
 
-    private var textMessage: ChatTextMessage {
-        return message as! ChatTextMessage
+    open override func setNeedsLayout() {
+        super.setup()
+    }
+
+    private var textMessage: ChatTextItem {
+        return item as! ChatTextItem
     }
 
     private lazy var containerView = View()

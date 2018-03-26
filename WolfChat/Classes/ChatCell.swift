@@ -8,12 +8,8 @@
 import WolfCore
 
 open class ChatCell: CollectionViewCell {
-    public var message: ChatMessage! {
+    public var item: ChatItem! {
         didSet { syncToMessage() }
-    }
-
-    open override var reuseIdentifier: String? {
-        return "com.wolfmcnally.ChatCell"
     }
 
     open func syncToMessage() {

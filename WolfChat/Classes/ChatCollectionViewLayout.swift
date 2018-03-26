@@ -43,7 +43,7 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
         return collectionView as! ChatCollectionView
     }
 
-    private var messages: [ChatMessage] {
+    private var messages: [ChatItem] {
         return chatCollectionView.messages
     }
 
@@ -110,14 +110,14 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
                 maxY = margins.top
             }
 
-            let message = messageAtIndexPath(indexPath)
+            let item = itemAtIndexPath(indexPath)
             let y = maxY
             let maxWidth = contentWidth
-            let preferredSize = message.cellSizeForWidth(maxWidth)
+            let preferredSize = item.cellSizeForWidth(maxWidth)
             let width = min(preferredSize.width, maxWidth)
             let size = CGSize(width: width, height: preferredSize.height)
             let x: CGFloat
-            switch message.alignment {
+            switch item.alignment {
             case .left:
                 x = margins.left
             case .center:
@@ -145,7 +145,7 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
         return IndexPath(item: indexPath.item - 1, section: indexPath.section)
     }
 
-    private func messageAtIndexPath(_ indexPath: IndexPath) -> ChatMessage {
-        return chatCollectionView.messageAtIndexPath(indexPath)
+    private func itemAtIndexPath(_ indexPath: IndexPath) -> ChatItem {
+        return chatCollectionView.itemAtIndexPath(indexPath)
     }
 }

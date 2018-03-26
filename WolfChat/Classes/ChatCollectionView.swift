@@ -9,7 +9,7 @@ import WolfCore
 import UIKit
 
 class ChatCollectionView: CollectionView {
-    var messages: [ChatMessage] = []
+    var messages: [ChatItem] = []
 
     private lazy var layout = ChatCollectionViewLayout()
 
@@ -18,14 +18,15 @@ class ChatCollectionView: CollectionView {
         set { layout.margins = newValue }
     }
 
-    func addMessage(_ message: ChatMessage, animated: Bool) {
+    func addItem(_ item: ChatItem, animated: Bool) -> IndexPath {
         let indexPath = IndexPath(item: messages.count, section: 0)
-        messages.append(message)
+        messages.append(item)
         if messages.count == 1 {
             reloadData()
         } else {
             insertItems(at: [indexPath])
         }
+        return indexPath
     }
 
     init() {
@@ -43,7 +44,7 @@ class ChatCollectionView: CollectionView {
         layout.invalidateLayout()
     }
 
-    func messageAtIndexPath(_ indexPath: IndexPath) -> ChatMessage {
+    func itemAtIndexPath(_ indexPath: IndexPath) -> ChatItem {
         return messages[indexPath.item]
     }
 }
@@ -55,10 +56,11 @@ extension ChatCollectionView: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let message = messageAtIndexPath(indexPath)
-        let cell = dequeueReusableCell(withReuseIdentifier: type(of: message).reuseIdentifier, for: indexPath) as! ChatCell
-        message.setupCell(cell)
-        cell.message = message
+        let item = itemAtIndexPath(indexPath)
+        let reuseIdentifier = type(of: item).defaultReuseIdentifier
+        let cell = dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ChatCell
+        item.setupCell(cell)
+        cell.item = item
         return cell
     }
 }

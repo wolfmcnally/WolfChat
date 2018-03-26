@@ -8,26 +8,39 @@
 import WolfCore
 
 public class ChatView: View {
+    private lazy var keyboardAvoidantView = KeyboardAvoidantView()
+    private lazy var stackView = VerticalStackView()
     private lazy var collectionView = ChatCollectionView()
+    private lazy var inputBarView = ChatInputBar()
 
     public var margins: UIEdgeInsets {
         get { return collectionView.margins }
         set { collectionView.margins = newValue }
     }
 
-    public func register<T: ChatMessage>(messageClass: T.Type) {
-        collectionView.register(messageClass.cellClass, forCellWithReuseIdentifier: messageClass.reuseIdentifier)
+    public func register<T: ChatItem>(messageClass: T.Type) {
+        collectionView.register(messageClass.cellClass, forCellWithReuseIdentifier: messageClass.defaultReuseIdentifier)
     }
 
-    public func addMessage(_ message: ChatMessage, animated: Bool) {
-        collectionView.addMessage(message, animated: animated)
+    @discardableResult public func addItem(_ item: ChatItem, animated: Bool) -> IndexPath {
+        return collectionView.addItem(item, animated: animated)
+    }
+
+    public func scrollToItem(at indexPath: IndexPath, at position: UICollectionViewScrollPosition, animated: Bool) {
+        collectionView.scrollToItem(at: indexPath, at: position, animated: animated)
     }
 
     public override func setup() {
         self => [
-            collectionView
+            keyboardAvoidantView => [
+                stackView => [
+                    collectionView,
+                    inputBarView
+                ]
+            ]
         ]
 
-        collectionView.constrainFrameToFrame()
+        keyboardAvoidantView.constrainFrameToFrame(priority: .defaultHigh)
+        stackView.constrainFrameToFrame()
     }
 }
