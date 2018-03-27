@@ -14,9 +14,6 @@ public struct ChatPlaceholderItem: ChatItem {
     public init() {
     }
 
-    public func setupCell(_ cell: ChatCell) {
-    }
-
     public func cellSizeForWidth(_ width: CGFloat) -> CGSize {
         return CGSize(width: width * 0.2, height: 50)
     }
@@ -34,8 +31,10 @@ open class ChatPlaceholderCell: ChatCell {
     open override func setup() {
         super.setup()
 
-        stackView => [
+        contentView => [
             placeholderView
         ]
+
+        placeholderView.constrainFrameToFrame()
     }
 }

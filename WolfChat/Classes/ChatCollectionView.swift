@@ -18,13 +18,19 @@ class ChatCollectionView: CollectionView {
         set { layout.margins = newValue }
     }
 
-    func addItem(_ item: ChatItem, animated: Bool) -> IndexPath {
+    func addItem(_ item: ChatItem) -> IndexPath {
         let indexPath = IndexPath(item: messages.count, section: 0)
         messages.append(item)
-        if messages.count == 1 {
-            reloadData()
+        if self.messages.count == 1 {
+            self.reloadData()
         } else {
-            insertItems(at: [indexPath])
+            dispatchAnimated(duration: 0.2) {
+                self.performBatchUpdates( {
+                    self.insertItems(at: [indexPath])
+                }, completion: { _ in
+                    self.scrollToBottom(animated: true)
+                } )
+            }.run()
         }
         return indexPath
     }
@@ -60,7 +66,6 @@ extension ChatCollectionView: UICollectionViewDataSource {
         let item = itemAtIndexPath(indexPath)
         let reuseIdentifier = type(of: item).defaultReuseIdentifier
         let cell = dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ChatCell
-        item.setupCell(cell)
         cell.item = item
         return cell
     }

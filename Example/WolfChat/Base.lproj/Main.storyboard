@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="lMW-0I-mUC">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -8,7 +8,23 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Navigation Controller-->
+        <scene sceneID="hHW-tn-OyP">
+            <objects>
+                <navigationController id="lMW-0I-mUC" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="REv-Pf-PiL">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="XzN-4a-JJb"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Q5r-Sq-ynS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-721" y="-378"/>
+        </scene>
+        <!--WolfChat-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
                 <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="WolfChat_Example" customModuleProvider="target" sceneMemberID="viewController">
@@ -33,13 +49,14 @@
                             <constraint firstItem="Lhk-7G-8of" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="ikP-v9-Z01"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" title="WolfChat" id="lNd-c4-Wvc"/>
                     <connections>
                         <outlet property="chatView" destination="Lhk-7G-8of" id="TQ5-4z-z3f"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-119.2" y="133.5832083958021"/>
+            <point key="canvasLocation" x="46" y="-378"/>
         </scene>
     </scenes>
 </document>

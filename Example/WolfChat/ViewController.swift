@@ -19,9 +19,46 @@ class ViewController: UIViewController {
         chatView.register(messageClass: ChatPlaceholderItem.self)
         chatView.register(messageClass: ChatTextItem.self)
         chatView.margins = UIEdgeInsets(all: 10)
+
+        chatView.shouldReturn = { [unowned self] _ in
+            self.send()
+            return false
+        }
+
+        chatView.onSendButton = { [unowned self] in
+            self.send()
+        }
+
+        needsPostItem = Asynchronizer(delay: 0.5) { [unowned self] in
+            self.postItemIfNeeded()
+        }
     }
 
-    var itemQueue = Queue<ChatItem>()
+    private func setNeedsPostItem() {
+        needsPostItem.setNeedsSync()
+    }
+
+    private var itemQueue = Queue<ChatItem>()
+    private var needsPostItem: Asynchronizer!
+
+    private func addItem(_ item: ChatItem) {
+        itemQueue.enqueue(item)
+        setNeedsPostItem()
+    }
+
+    private func postItem(_ item: ChatItem) {
+        chatView.addItem(item)
+    }
+
+    private func postItemIfNeeded() {
+        needsPostItem.cancel()
+        guard let item = itemQueue.dequeue() else { return }
+        postItem(item)
+
+        if !itemQueue.isEmpty {
+            setNeedsPostItem()
+        }
+    }
 
     private lazy var sentFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#3FACFD"), shape: .bubble(cornerRadius: 18, tailCorner: .right))
     private lazy var receivedFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#E5E5EA"), shape: .bubble(cornerRadius: 18, tailCorner: .left))
@@ -33,7 +70,6 @@ class ViewController: UIViewController {
     private lazy var receivedItemStyle = ChatTextItemStyle(textInsets: messageTextInsets, widthFrac: widthFrac, frameStyle: receivedFrameStyle)
 
     private lazy var messageFont = UIFont.systemFont(ofSize: 15)
-//    private lazy var messageFont = UIFont.systemFont(ofSize: 24)
 
     private lazy var sentTextAttributes: StringAttributes = [
         .font : messageFont,
@@ -64,48 +100,43 @@ class ViewController: UIViewController {
     private func addPlaceholderItem(alignment: ChatItemAlignment) {
         var item = ChatPlaceholderItem()
         item.alignment = alignment
-        itemQueue.enqueue(item)
+        addItem(item)
     }
 
-    private func addSentTextItem() {
-        let sentText = Lorem.sentences(2, emojisFrac: 0.1)
-        let sentItem = makeSentItem(text: sentText)
-        itemQueue.enqueue(sentItem)
+    private func addSentTextItem(text: String? = nil) {
+        let theText = text ?? Lorem.sentences(2, emojisFrac: 0.1)
+        let item = makeSentItem(text: theText)
+        addItem(item)
     }
 
     private func addReceivedTextItem() {
-        let receivedText = Lorem.sentences(2, emojisFrac: 0.1)
-        let receivedItem = makeReceivedItem(text: receivedText)
-        itemQueue.enqueue(receivedItem)
+        let text = Lorem.sentences(2, emojisFrac: 0.1)
+        let item = makeReceivedItem(text: text)
+        addItem(item)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        chatView.beginEditing()
 
         addPlaceholderItem(alignment: .right)
         addPlaceholderItem(alignment: .left)
         addPlaceholderItem(alignment: .center)
         addPlaceholderItem(alignment: .right)
 
-        addSentTextItem()
-        addReceivedTextItem()
-        addSentTextItem()
-        addReceivedTextItem()
-        addSentTextItem()
-        addReceivedTextItem()
-
-        dispatchOnMain(afterDelay: 0.5) {
-            self.addNextItem()
+        for _ in 0 ..< 4 {
+            addSentTextItem()
+            addReceivedTextItem()
         }
     }
 
-    private func addNextItem() {
-        guard let item = itemQueue.dequeue() else { return }
-        let indexPath = chatView.addItem(item, animated: true)
-        chatView.scrollToItem(at: indexPath, at: .centeredVertically, animated: true)
-
-        dispatchOnMain(afterDelay: 0.5) {
-            self.addNextItem()
+    private func send() {
+        let item = makeSentItem(text: chatView.text)
+        postItem(item)
+        chatView.removeText()
+        dispatchOnMain(afterDelay: 1.0) {
+            self.addReceivedTextItem()
         }
     }
 }

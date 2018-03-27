@@ -50,8 +50,9 @@ public struct ChatTextItem: ChatItem {
         let maxTextWidth = effectiveWidth - textInsets.horizontal - shapeInsets.horizontal
         let textMaxBounds = CGSize(width: maxTextWidth, height: 10_000).bounds
         let textBounds = label.textRect(forBounds: textMaxBounds, limitedToNumberOfLines: 0)
+        let cellWidth = min(effectiveWidth, textBounds.width) + textInsets.horizontal + shapeInsets.horizontal
         let cellHeight = textBounds.height + textInsets.vertical + shapeInsets.vertical
-        let cellSize = CGSize(width: effectiveWidth, height: cellHeight)
+        let cellSize = CGSize(width: cellWidth, height: cellHeight)
         return cellSize
     }
 
@@ -63,15 +64,9 @@ open class ChatTextCell: ChatCell {
         return ChatTextItem.defaultReuseIdentifier
     }
 
-    open override func setNeedsLayout() {
-        super.setup()
-    }
-
     private var textItem: ChatTextItem {
         return item as! ChatTextItem
     }
-
-    private lazy var containerView = View()
 
     private var frameView: View {
         return textItem.frameView
@@ -89,15 +84,17 @@ open class ChatTextCell: ChatCell {
         return textItem.style.shapeInsets
     }
 
+    open override func prepareForReuse() {
+        super.prepareForReuse()
+        contentView.removeAllSubviews()
+    }
+
     open override func syncToItem() {
         super.syncToItem()
 
-        stackView.removeAllSubviews()
-        stackView => [
-            containerView => [
-                frameView,
-                label
-            ]
+        contentView => [
+            frameView,
+            label
         ]
 
         frameView.constrainFrameToFrame()

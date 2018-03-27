@@ -14,14 +14,4 @@ open class ChatCell: CollectionViewCell {
 
     open func syncToItem() {
     }
-
-    private(set) lazy var stackView = HorizontalStackView()
-
-    open override func setup() {
-        contentView => [
-            stackView
-        ]
-
-        stackView.constrainFrameToFrame()
-    }
 }

@@ -21,12 +21,44 @@ public class ChatView: View {
         collectionView.register(messageClass.cellClass, forCellWithReuseIdentifier: messageClass.defaultReuseIdentifier)
     }
 
-    @discardableResult public func addItem(_ item: ChatItem, animated: Bool) -> IndexPath {
-        return collectionView.addItem(item, animated: animated)
+    public var shouldReturn: TextView.PredicateBlock? {
+        get { return inputBarView.shouldReturn }
+        set { inputBarView.shouldReturn = newValue }
+    }
+
+    public var onSendButton: Block? {
+        get { return inputBarView.onSendButton }
+        set { inputBarView.onSendButton = newValue }
+    }
+
+    public var text: String {
+        get { return inputBarView.text }
+        set { inputBarView.text = newValue }
+    }
+
+    public var placeholder: String? {
+        get { return inputBarView.placeholder }
+        set { inputBarView.placeholder = newValue }
+    }
+
+    public func removeText() {
+        text.removeAll()
+    }
+
+    public func beginEditing() {
+        inputBarView.beginEditing()
+    }
+
+    @discardableResult public func addItem(_ item: ChatItem) -> IndexPath {
+        return collectionView.addItem(item)
     }
 
     public func scrollToItem(at indexPath: IndexPath, at position: UICollectionViewScrollPosition, animated: Bool) {
         collectionView.scrollToItem(at: indexPath, at: position, animated: animated)
+    }
+
+    public func scrollToBottom(animated: Bool) {
+        collectionView.scrollToBottom(animated: animated)
     }
 
     public override func setup() {
