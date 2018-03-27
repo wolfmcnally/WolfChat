@@ -41,6 +41,21 @@ public class ChatView: View {
         set { inputBarView.placeholder = newValue }
     }
 
+    public var inputBarLeftView: UIView? {
+        get { return inputBarView.leftView }
+        set { inputBarView.leftView = newValue }
+    }
+
+    public var inputBarRightView: UIView? {
+        get { return inputBarView.rightView }
+        set { inputBarView.rightView = newValue }
+    }
+
+    public var inputBarTopView: UIView? {
+        get { return inputBarView.topView }
+        set { inputBarView.topView = newValue }
+    }
+
     public func removeText() {
         text.removeAll()
     }
@@ -61,6 +76,8 @@ public class ChatView: View {
         collectionView.scrollToBottom(animated: animated)
     }
 
+    private var inputBarDidChangeHeightObserver: ChatInputBar.DidChangeHeight.Observer!
+
     public override func setup() {
         self => [
             keyboardAvoidantView => [
@@ -76,6 +93,12 @@ public class ChatView: View {
             inputBarView.trailingAnchor == keyboardAvoidantView.trailingAnchor,
             inputBarView.bottomAnchor == keyboardAvoidantView.bottomAnchor
         )
+
+        inputBarDidChangeHeightObserver = inputBarView.didChangeHeight.add {
+            self.setNeedsLayout()
+            self.layoutIfNeeded()
+            self.scrollToBottom(animated: true)
+        }
     }
 
     public override func layoutSubviews() {

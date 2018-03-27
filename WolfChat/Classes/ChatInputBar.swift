@@ -86,24 +86,83 @@ class ChatInputBar: View {
         //🍒.backgroundColor = UIColor.red.withAlphaComponent(0.2)
     }
 
-    private var heightConstraint = Constraints()
+    var leftView: UIView? {
+        didSet {
+            leftContainerView.removeAllSubviews()
+            guard let leftView = leftView else { return }
+            leftContainerView => [
+                leftView
+            ]
+            leftView.constrainFrameToFrame()
+        }
+    }
+
+    var rightView: UIView? {
+        didSet {
+            rightContainerView.removeAllSubviews()
+            guard let rightView = rightView else { return }
+            rightContainerView => [
+                rightView
+            ]
+            rightView.constrainFrameToFrame()
+        }
+    }
+
+    var topView: UIView? {
+        didSet {
+            topContainerView.removeAllSubviews()
+            guard let topView = topView else { return }
+            topContainerView => [
+                topView
+            ]
+            topView.constrainFrameToFrame()
+        }
+    }
+
+    private lazy var verticalStackView = VerticalStackView()
+    private lazy var horizontalStackView = HorizontalStackView()
+    private lazy var centerView = View()
+
+    private lazy var topContainerView = View() • { 🍒 in
+        🍒.constrainHeight(to: 0, priority: .defaultHigh)
+    }
+
+    private lazy var leftContainerView = View() • { 🍒 in
+        🍒.constrainWidth(to: 0, priority: .defaultHigh)
+    }
+
+    private lazy var rightContainerView = View() • { 🍒 in
+        🍒.constrainWidth(to: 0, priority: .defaultHigh)
+    }
+
+    private var textViewHeightConstraint = Constraints()
     private var frameInsets = UIEdgeInsets(all: 4)
     private var textInsets = UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 40)
 
     override func setup() {
         self => [
             backgroundView,
-            frameView,
-            placeholderLabel,
-            textView,
-            sendButton
+            verticalStackView => [
+                topContainerView,
+                horizontalStackView => [
+                    leftContainerView,
+                    centerView => [
+                        frameView,
+                        placeholderLabel,
+                        textView,
+                        sendButton
+                    ],
+                    rightContainerView
+                ]
+            ]
         ]
 
         backgroundView.constrainFrameToFrame()
+        verticalStackView.constrainFrameToFrame()
         frameView.constrainFrameToFrame(insets: CGInsets(edgeInsets: frameInsets))
         placeholderLabel.constrainFrameToFrame(insets: CGInsets(edgeInsets: textInsets))
         textView.constrainFrameToFrame(insets: CGInsets(edgeInsets: textInsets))
-        heightConstraint = textView.constrainHeight(to: lineHeight)
+        textViewHeightConstraint = textView.constrainHeight(to: lineHeight)
 
         Constraints(
             sendButton.trailingAnchor == frameView.trailingAnchor - 4,
@@ -115,6 +174,9 @@ class ChatInputBar: View {
         super.layoutSubviews()
         syncToText(animated: false)
     }
+
+    typealias DidChangeHeight = Event<Void>
+    let didChangeHeight = DidChangeHeight()
 
     private func syncHeight(animated: Bool) {
         let maxHeight = CGFloat(maxVisibleLines) * lineHeight
@@ -146,11 +208,12 @@ class ChatInputBar: View {
             textView.isScrollEnabled = false
         }
 
-        guard heightConstraint.constant != newHeight else { return }
+        guard textViewHeightConstraint.constant != newHeight else { return }
         dispatchAnimated(animated, duration: 0.2) {
-            self.heightConstraint.constant = newHeight
-            self.superview!.layoutIfNeeded()
-            }.run()
+            self.textViewHeightConstraint.constant = newHeight
+        }.finally {
+            self.didChangeHeight.notify(())
+        }.run()
     }
 
     private func syncSendButton() {

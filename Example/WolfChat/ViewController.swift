@@ -20,6 +20,10 @@ class ViewController: UIViewController {
         chatView.register(messageClass: ChatTextItem.self)
         chatView.margins = UIEdgeInsets(all: 10)
 
+        chatView.inputBarTopView = inputBarTopView
+        chatView.inputBarLeftView = inputBarLeftView
+        chatView.inputBarRightView = inputBarRightView
+
         chatView.shouldReturn = { [unowned self] _ in
             self.send()
             return false
@@ -58,6 +62,18 @@ class ViewController: UIViewController {
         if !itemQueue.isEmpty {
             setNeedsPostItem()
         }
+    }
+
+    private lazy var inputBarTopView = PlaceholderView(title: "Top") • { 🍒 in
+        🍒.constrainHeight(to: 20)
+    }
+
+    private lazy var inputBarLeftView = PlaceholderView(title: "Left") • { 🍒 in
+        🍒.constrainWidth(to: 40)
+    }
+
+    private lazy var inputBarRightView = PlaceholderView(title: "Right") • { 🍒 in
+        🍒.constrainWidth(to: 40)
     }
 
     private lazy var sentFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#3FACFD"), shape: .bubble(cornerRadius: 18, tailCorner: .right))
