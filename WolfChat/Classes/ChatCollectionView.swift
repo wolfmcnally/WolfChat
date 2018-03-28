@@ -13,6 +13,11 @@ class ChatCollectionView: CollectionView {
 
     private lazy var layout = ChatCollectionViewLayout()
 
+    var spacing: CGFloat {
+        get { return layout.spacing }
+        set { layout.spacing = newValue }
+    }
+
     var margins: UIEdgeInsets {
         get { return layout.margins }
         set { layout.margins = newValue }

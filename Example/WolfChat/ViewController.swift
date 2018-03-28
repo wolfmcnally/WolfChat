@@ -18,7 +18,6 @@ class ViewController: UIViewController {
 
         chatView.register(messageClass: ChatPlaceholderItem.self)
         chatView.register(messageClass: ChatTextItem.self)
-        chatView.margins = UIEdgeInsets(all: 10)
 
         chatView.inputBarTopView = inputBarTopView
         chatView.inputBarLeftView = inputBarLeftView
@@ -64,16 +63,21 @@ class ViewController: UIViewController {
         }
     }
 
+    private let isDebug = false
+
     private lazy var inputBarTopView = PlaceholderView(title: "Top") • { 🍒 in
         🍒.constrainHeight(to: 20)
+        🍒.backgroundColor = debugColor(when: isDebug, debug: .red)
     }
 
     private lazy var inputBarLeftView = PlaceholderView(title: "Left") • { 🍒 in
         🍒.constrainWidth(to: 40)
+        🍒.backgroundColor = debugColor(when: isDebug, debug: .green)
     }
 
     private lazy var inputBarRightView = PlaceholderView(title: "Right") • { 🍒 in
         🍒.constrainWidth(to: 40)
+        🍒.backgroundColor = debugColor(when: isDebug, debug: .blue)
     }
 
     private lazy var sentFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#3FACFD"), shape: .bubble(cornerRadius: 18, tailCorner: .right))

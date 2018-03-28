@@ -34,8 +34,9 @@ class ChatInputBar: View {
 
     private lazy var placeholderLabel = Label() • { 🍒 in
         🍒.text = "WolfChat"
-        🍒.font = font
-        🍒.textColor = frameGray
+        🍒.textColor = try! UIColor(string: "#C7C7CC")
+        🍒.textColor = .gray
+        //🍒.backgroundColor = UIColor.blue.withAlphaComponent(0.2)
     }
 
     private lazy var backgroundView = View() • { 🍒 in
@@ -46,13 +47,10 @@ class ChatInputBar: View {
         effectsView.constrainFrameToFrame()
     }
 
-    private lazy var frameGray = try! UIColor(string: "#C7C7CC")
-
     private lazy var frameView = FrameView() • { 🍒 in
         🍒.style = .rounded(cornerRadius: 15)
-        🍒.color = frameGray
-        🍒.backgroundColor = .white
-        //🍒.backgroundColor = UIColor.blue.withAlphaComponent(0.2)
+        🍒.strokeColor = try! UIColor(string: "#C7C7CC")
+        🍒.fillColor = .white
     }
 
     private lazy var sendButtonImage = makeSendButtonImage()
@@ -65,7 +63,24 @@ class ChatInputBar: View {
         }
     }
 
-    private lazy var font = UIFont.systemFont(ofSize: 15)
+    var font: UIFont {
+        get { return textView.font! }
+        set {
+            textView.font = newValue
+            placeholderLabel.font = newValue
+        }
+    }
+
+    var placeholderColor: UIColor {
+        get { return placeholderLabel.textColor! }
+        set { placeholderLabel.textColor = newValue }
+    }
+
+    var textColor: UIColor {
+        get { return textView.textColor! }
+        set { textView.textColor = newValue }
+    }
+
     private lazy var lineHeight = ceil(font.lineHeight)
 
     private let maxVisibleLines = 5
@@ -80,10 +95,9 @@ class ChatInputBar: View {
 
     private lazy var textView = MyTextView() • { 🍒 in
         🍒.delegate = self
-        🍒.font = font
-        //🍒.text = "Hello, world!"
         🍒.isScrollEnabled = false
         //🍒.backgroundColor = UIColor.red.withAlphaComponent(0.2)
+        🍒.textColor = .black
     }
 
     var leftView: UIView? {
@@ -111,11 +125,12 @@ class ChatInputBar: View {
     var topView: UIView? {
         didSet {
             topContainerView.removeAllSubviews()
-            guard let topView = topView else { return }
+            guard let topView = topView else { relayout(animated: true); return }
             topContainerView => [
                 topView
             ]
             topView.constrainFrameToFrame()
+            relayout(animated: true)
         }
     }
 
@@ -135,7 +150,7 @@ class ChatInputBar: View {
         🍒.constrainWidth(to: 0, priority: .defaultHigh)
     }
 
-    private var textViewHeightConstraint = Constraints()
+    private var textViewHeightConstraint: Constraints!
     private var frameInsets = UIEdgeInsets(all: 4)
     private var textInsets = UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 40)
 
@@ -162,7 +177,9 @@ class ChatInputBar: View {
         frameView.constrainFrameToFrame(insets: CGInsets(edgeInsets: frameInsets))
         placeholderLabel.constrainFrameToFrame(insets: CGInsets(edgeInsets: textInsets))
         textView.constrainFrameToFrame(insets: CGInsets(edgeInsets: textInsets))
-        textViewHeightConstraint = textView.constrainHeight(to: lineHeight)
+        textViewHeightConstraint = textView.constrainHeight(to: 50)
+
+        font = .systemFont(ofSize: 14)
 
         Constraints(
             sendButton.trailingAnchor == frameView.trailingAnchor - 4,
@@ -175,10 +192,13 @@ class ChatInputBar: View {
         syncToText(animated: false)
     }
 
+    typealias WillChangeHeight = Event<Void>
+    let willChangeHeight = WillChangeHeight()
+
     typealias DidChangeHeight = Event<Void>
     let didChangeHeight = DidChangeHeight()
 
-    private func syncHeight(animated: Bool) {
+    private func syncTextViewHeight(animated: Bool) {
         let maxHeight = CGFloat(maxVisibleLines) * lineHeight
 
         func makeNewHeight() -> CGFloat {
@@ -209,8 +229,14 @@ class ChatInputBar: View {
         }
 
         guard textViewHeightConstraint.constant != newHeight else { return }
+        self.textViewHeightConstraint.constant = newHeight
+        relayout(animated: true)
+    }
+
+    private func relayout(animated: Bool) {
         dispatchAnimated(animated, duration: 0.2) {
-            self.textViewHeightConstraint.constant = newHeight
+            self.willChangeHeight.notify(())
+            self.layoutIfNeeded()
         }.finally {
             self.didChangeHeight.notify(())
         }.run()
@@ -225,7 +251,7 @@ class ChatInputBar: View {
     }
 
     private func syncToText(animated: Bool) {
-        syncHeight(animated: animated)
+        syncTextViewHeight(animated: animated)
         syncSendButton()
         syncPlaceholder()
     }

@@ -19,7 +19,7 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
         didSet { invalidateLayout() }
     }
 
-    var margins: UIEdgeInsets = .zero {
+    var margins = UIEdgeInsets(all: 10) {
         didSet { invalidateLayout() }
     }
 

@@ -9,9 +9,18 @@ import WolfCore
 
 public class ChatView: View {
     private lazy var keyboardAvoidantView = KeyboardAvoidantView()
-    private lazy var collectionView = ChatCollectionView()
+
+    private lazy var collectionView = ChatCollectionView() • {
+        $0.contentInsetAdjustmentBehavior = .never
+    }
+
     private lazy var inputBarView = ChatInputBar()
 
+    public var spacing: CGFloat {
+        get { return collectionView.spacing }
+        set { collectionView.spacing = newValue }
+    }
+    
     public var margins: UIEdgeInsets {
         get { return collectionView.margins }
         set { collectionView.margins = newValue }
@@ -56,6 +65,21 @@ public class ChatView: View {
         set { inputBarView.topView = newValue }
     }
 
+    public var inputBarFont: UIFont {
+        get { return inputBarView.font }
+        set { inputBarView.font = newValue }
+    }
+
+    public var inputBarPlaceholderColor: UIColor {
+        get { return inputBarView.placeholderColor }
+        set { inputBarView.placeholderColor = newValue }
+    }
+
+    public var inputBarTextColor: UIColor {
+        get { return inputBarView.textColor }
+        set { inputBarView.textColor = newValue }
+    }
+
     public func removeText() {
         text.removeAll()
     }
@@ -77,6 +101,7 @@ public class ChatView: View {
     }
 
     private var inputBarDidChangeHeightObserver: ChatInputBar.DidChangeHeight.Observer!
+    private var inputBarWillChangeHeightObserver: ChatInputBar.WillChangeHeight.Observer!
 
     public override func setup() {
         self => [
@@ -95,8 +120,18 @@ public class ChatView: View {
             inputBarView.bottomAnchor == safeAreaLayoutGuide.bottomAnchor =&= .defaultHigh
         )
 
-        inputBarDidChangeHeightObserver = inputBarView.didChangeHeight.add {
+        inputBarWillChangeHeightObserver = inputBarView.willChangeHeight.add {
+            //logInfo("willChangeHeight")
             self.setNeedsLayout()
+            self.layoutIfNeeded()
+        }
+
+        inputBarDidChangeHeightObserver = inputBarView.didChangeHeight.add {
+            let inputBarHeight = self.inputBarView.frame.height
+            let bottomSafeInset = self.safeAreaInsets.bottom
+            let height = inputBarHeight + bottomSafeInset
+            //logInfo("didChangeHeight: \(height)")
+            self.collectionView.contentInset.bottom = height
             self.layoutIfNeeded()
             self.scrollToBottom(animated: true)
         }
@@ -105,8 +140,6 @@ public class ChatView: View {
     public override func layoutSubviews() {
         super.layoutSubviews()
 
-        inputBarView.layoutIfNeeded()
-        let height = inputBarView.frame.height
-        collectionView.contentInset.bottom = height
+        collectionView.contentInset.top = safeAreaInsets.top
     }
 }
