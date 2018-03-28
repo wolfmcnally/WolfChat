@@ -91,7 +91,8 @@ public class ChatView: View {
         Constraints(
             inputBarView.leadingAnchor == keyboardAvoidantView.leadingAnchor,
             inputBarView.trailingAnchor == keyboardAvoidantView.trailingAnchor,
-            inputBarView.bottomAnchor == keyboardAvoidantView.bottomAnchor
+            inputBarView.bottomAnchor <= keyboardAvoidantView.bottomAnchor,
+            inputBarView.bottomAnchor == safeAreaLayoutGuide.bottomAnchor =&= .defaultHigh
         )
 
         inputBarDidChangeHeightObserver = inputBarView.didChangeHeight.add {
