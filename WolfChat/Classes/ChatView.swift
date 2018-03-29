@@ -88,8 +88,12 @@ public class ChatView: View {
         inputBarView.beginEditing()
     }
 
-    @discardableResult public func addItem(_ item: ChatItem) -> IndexPath {
+    @discardableResult public func addItem(_ item: ChatItem) -> UUID {
         return collectionView.addItem(item)
+    }
+
+    public func removeItem(id: UUID) {
+        collectionView.removeItem(id: id)
     }
 
     public func scrollToItem(at indexPath: IndexPath, at position: UICollectionViewScrollPosition, animated: Bool) {

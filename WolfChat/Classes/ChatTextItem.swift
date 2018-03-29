@@ -27,6 +27,7 @@ public struct ChatTextItem: ChatItem {
     public static let defaultReuseIdentifier = "com.wolfmcnally.ChatText"
     public static let cellClass: AnyClass = ChatTextCell.self
 
+    public let id = UUID()
     public let text: NSAttributedString
     public let style: ChatTextItemStyle
 
@@ -43,7 +44,8 @@ public struct ChatTextItem: ChatItem {
         🍒.numberOfLines = 0
     }
 
-    public func cellSizeForWidth(_ width: CGFloat) -> CGSize {
+    public func sizeThatFits(_ size: CGSize) -> CGSize {
+        let width = size.width
         let textInsets = style.textInsets
         let effectiveWidth = width * style.widthFrac
         let shapeInsets = style.shapeInsets

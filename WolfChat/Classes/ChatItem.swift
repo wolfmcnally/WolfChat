@@ -8,7 +8,8 @@
 public protocol ChatItem {
     static var defaultReuseIdentifier: String { get }
     static var cellClass: AnyClass { get }
-    func cellSizeForWidth(_ width: CGFloat) -> CGSize
+    var id: UUID { get }
+    func sizeThatFits(_ size: CGSize) -> CGSize
     var alignment: ChatItemAlignment { get }
 }
 

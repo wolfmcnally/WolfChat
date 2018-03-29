@@ -63,11 +63,22 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
             contentSize = nil
         } else if context.invalidateDataSourceCounts {
             contentSize = nil
+        } else if let invalidatedItemIndexPaths = context.invalidatedItemIndexPaths {
+            logWarning("invalidatedItemIndexPaths: \(invalidatedItemIndexPaths)")
+            cache.removeAll()
+            contentSize = nil
+//            let lowestIndex = invalidatedItemIndexPaths.reduce(Int.max) { (lowestSoFar, indexPath) -> Int in
+//                return min(lowestSoFar, indexPath.item)
+//            }
+//            for indexPath in cache.keys {
+//                guard indexPath.item <= lowestIndex else { continue }
+//                cache.removeValue(forKey: indexPath)
+//            }
+//            contentSize = nil
         } else {
             //print(context)
             cache.removeAll()
             contentSize = nil
-            //preconditionFailure()
         }
     }
 
@@ -113,7 +124,7 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
             let item = itemAtIndexPath(indexPath)
             let y = maxY
             let maxWidth = contentWidth
-            let preferredSize = item.cellSizeForWidth(maxWidth)
+            let preferredSize = item.sizeThatFits(CGSize(width: maxWidth, height: .greatestFiniteMagnitude))
             let width = min(preferredSize.width, maxWidth)
             let size = CGSize(width: width, height: preferredSize.height)
             let x: CGFloat

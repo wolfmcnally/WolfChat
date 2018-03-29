@@ -23,21 +23,34 @@ class ChatCollectionView: CollectionView {
         set { layout.margins = newValue }
     }
 
-    func addItem(_ item: ChatItem) -> IndexPath {
+    func addItem(_ item: ChatItem) -> UUID {
         let indexPath = IndexPath(item: messages.count, section: 0)
         messages.append(item)
         if self.messages.count == 1 {
             self.reloadData()
         } else {
-            dispatchAnimated(duration: 0.2) {
+//            dispatchAnimated(duration: 0.2) {
                 self.performBatchUpdates( {
                     self.insertItems(at: [indexPath])
                 }, completion: { _ in
                     self.scrollToBottom(animated: true)
                 } )
-            }.run()
+//            }.run()
         }
-        return indexPath
+        return item.id
+    }
+
+    func removeItem(id: UUID) {
+        let index = messages.index(where: { $0.id == id })!
+        let indexPath = IndexPath(item: index, section: 0)
+        self.messages.remove(at: index)
+        performBatchUpdates({
+            let context = UICollectionViewLayoutInvalidationContext()
+            context.invalidateItems(at: [indexPath])
+            layout.invalidateLayout(with: context)
+            self.deleteItems(at: [indexPath])
+        }, completion: { _ in
+        })
     }
 
     init() {
