@@ -116,7 +116,13 @@ public class ChatView: View {
         ]
 
         keyboardAvoidantView.constrainFrameToFrame(priority: .defaultHigh)
-        collectionView.constrainFrameToFrame()
+        Constraints(
+            collectionView.topAnchor == keyboardAvoidantView.topAnchor,
+            collectionView.bottomAnchor == keyboardAvoidantView.bottomAnchor,
+            collectionView.leadingAnchor == keyboardAvoidantView.safeAreaLayoutGuide.leadingAnchor,
+            collectionView.trailingAnchor == keyboardAvoidantView.safeAreaLayoutGuide.trailingAnchor
+        )
+
         Constraints(
             inputBarView.leadingAnchor == keyboardAvoidantView.leadingAnchor,
             inputBarView.trailingAnchor == keyboardAvoidantView.trailingAnchor,
@@ -125,7 +131,6 @@ public class ChatView: View {
         )
 
         inputBarWillChangeHeightObserver = inputBarView.willChangeHeight.add {
-            //logInfo("willChangeHeight")
             self.setNeedsLayout()
             self.layoutIfNeeded()
         }
@@ -134,7 +139,6 @@ public class ChatView: View {
             let inputBarHeight = self.inputBarView.frame.height
             let bottomSafeInset = self.safeAreaInsets.bottom
             let height = inputBarHeight + bottomSafeInset
-            //logInfo("didChangeHeight: \(height)")
             self.collectionView.contentInset.bottom = height
             self.layoutIfNeeded()
             self.scrollToBottom(animated: true)

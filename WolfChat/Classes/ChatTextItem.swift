@@ -7,22 +7,6 @@
 
 import WolfCore
 
-public struct ChatTextItemStyle {
-    public let textInsets: UIEdgeInsets
-    public let widthFrac: CGFrac
-    public let frameStyle: ChatFrameStyle
-
-    public var shapeInsets: UIEdgeInsets {
-        return frameStyle.shapeInsets
-    }
-
-    public init(textInsets: UIEdgeInsets, widthFrac: CGFrac, frameStyle: ChatFrameStyle) {
-        self.textInsets = textInsets
-        self.widthFrac = widthFrac
-        self.frameStyle = frameStyle
-    }
-}
-
 public struct ChatTextItem: ChatItem {
     public static let defaultReuseIdentifier = "com.wolfmcnally.ChatText"
     public static let cellClass: AnyClass = ChatTextCell.self
@@ -59,6 +43,22 @@ public struct ChatTextItem: ChatItem {
     }
 
     public var alignment: ChatItemAlignment = .right
+}
+
+public struct ChatTextItemStyle {
+    public let textInsets: UIEdgeInsets
+    public let widthFrac: CGFrac
+    public let frameStyle: ChatFrameStyle
+
+    public var shapeInsets: UIEdgeInsets {
+        return frameStyle.shapeInsets
+    }
+
+    public init(textInsets: UIEdgeInsets, widthFrac: CGFrac, frameStyle: ChatFrameStyle) {
+        self.textInsets = textInsets
+        self.widthFrac = widthFrac
+        self.frameStyle = frameStyle
+    }
 }
 
 open class ChatTextCell: ChatCell {

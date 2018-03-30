@@ -45,10 +45,10 @@ class ChatCollectionView: CollectionView {
         let indexPath = IndexPath(item: index, section: 0)
         self.messages.remove(at: index)
         performBatchUpdates({
-            let context = UICollectionViewLayoutInvalidationContext()
+            self.deleteItems(at: [indexPath])
+            let context = ChatCollectionViewLayout.InvalidationContext()
             context.invalidateItems(at: [indexPath])
             layout.invalidateLayout(with: context)
-            self.deleteItems(at: [indexPath])
         }, completion: { _ in
         })
     }
@@ -66,11 +66,24 @@ class ChatCollectionView: CollectionView {
         dataSource = self
         delegate = self
         endsEditingWhenTapped = true
-        layout.invalidateLayout()
+        //layout.invalidateLayout()
     }
 
     func itemAtIndexPath(_ indexPath: IndexPath) -> ChatItem {
         return messages[indexPath.item]
+    }
+
+    private var lastWidth: CGFloat?
+
+    override func layoutSubviews() {
+        defer { super.layoutSubviews() }
+
+        let currentWidth = bounds.width
+        guard lastWidth != currentWidth else { return }
+        lastWidth = currentWidth
+        let context = ChatCollectionViewLayout.InvalidationContext()
+        context.invalidateWidth = true
+        layout.invalidateLayout(with: context)
     }
 }
 

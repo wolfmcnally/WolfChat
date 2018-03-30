@@ -8,6 +8,10 @@
 import WolfCore
 import UIKit
 
+extension LogGroup {
+    public static let chatCollectionViewInvalidation = LogGroup("chatCollectionViewInvalidation")
+}
+
 extension UICollectionViewLayoutInvalidationContext {
     override open var description: String {
         return "<\(super.description) everything: \(invalidateEverything), dataSourceCounts: \(invalidateDataSourceCounts), indexPaths: \(invalidatedItemIndexPaths†), previousInteractiveIndexPaths: \(previousIndexPathsForInteractivelyMovingItems†), targetInteractiveIndexPaths: \(targetIndexPathsForInteractivelyMovingItems†), contentSizeAdjustment: \(contentSizeAdjustment), contentOffsetAdjustment: \(contentOffsetAdjustment), interactiveTarget: \(interactiveMovementTarget)>"
@@ -15,28 +19,33 @@ extension UICollectionViewLayoutInvalidationContext {
 }
 
 class ChatCollectionViewLayout: UICollectionViewLayout {
+    class InvalidationContext: UICollectionViewLayoutInvalidationContext {
+        var invalidateWidth: Bool = false
+        var invalidateSpacing: Bool = false
+        var invalidateMargins: Bool = false
+    }
+
     var spacing: CGFloat = 10 {
-        didSet { invalidateLayout() }
+        didSet {
+            let context = ChatCollectionViewLayout.InvalidationContext()
+            context.invalidateSpacing = true
+            invalidateLayout(with: context)
+        }
     }
 
     var margins = UIEdgeInsets(all: 10) {
-        didSet { invalidateLayout() }
+        didSet {
+            let context = ChatCollectionViewLayout.InvalidationContext()
+            context.invalidateMargins = true
+            invalidateLayout(with: context)
+        }
     }
 
-    private var cache: [IndexPath : UICollectionViewLayoutAttributes] = [:]
+    private var cache: [UICollectionViewLayoutAttributes?] = []
     private var contentSize: CGSize?
 
-    private var effectiveBoundsSize: CGSize?
-    private var boundsSize: CGSize {
-        if let effectiveBoundsSize = effectiveBoundsSize {
-            return effectiveBoundsSize
-        }
-
-        return chatCollectionView.bounds.size
-    }
-
     private var contentWidth: CGFloat {
-        return boundsSize.width
+        return chatCollectionView.bounds.width
     }
 
     private var chatCollectionView: ChatCollectionView {
@@ -47,38 +56,52 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
         return chatCollectionView.messages
     }
 
-    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        let newSize = newBounds.size
-        if effectiveBoundsSize != newSize {
-            effectiveBoundsSize = newSize
-            return true
-        }
-        return false
+    private func invalidateAll() {
+        cache.removeAll()
+        contentSize = nil
     }
 
     override func invalidateLayout(with context: UICollectionViewLayoutInvalidationContext) {
         super.invalidateLayout(with: context)
         if context.invalidateEverything {
-            cache.removeAll()
-            contentSize = nil
+            // happens on reloadData()
+            logTrace("invalidateEverything", group: .chatCollectionViewInvalidation)
+            invalidateAll()
         } else if context.invalidateDataSourceCounts {
+            // happens when new item appended
+            logTrace("invalidateDataSourceCounts", group: .chatCollectionViewInvalidation)
             contentSize = nil
         } else if let invalidatedItemIndexPaths = context.invalidatedItemIndexPaths {
-            logWarning("invalidatedItemIndexPaths: \(invalidatedItemIndexPaths)")
-            cache.removeAll()
+            // happens when items are deleted
+            logTrace("invalidatedItemIndexPaths: \(invalidatedItemIndexPaths)", group: .chatCollectionViewInvalidation)
+
+            let lowestIndex = invalidatedItemIndexPaths.reduce(Int.max) { (lowestSoFar, indexPath) -> Int in
+                return min(lowestSoFar, indexPath.item)
+            }
+            for index in lowestIndex ..< cache.count {
+                cache[index] = nil
+            }
             contentSize = nil
-//            let lowestIndex = invalidatedItemIndexPaths.reduce(Int.max) { (lowestSoFar, indexPath) -> Int in
-//                return min(lowestSoFar, indexPath.item)
-//            }
-//            for indexPath in cache.keys {
-//                guard indexPath.item <= lowestIndex else { continue }
-//                cache.removeValue(forKey: indexPath)
-//            }
-//            contentSize = nil
+        } else if let context = context as? InvalidationContext {
+            if context.invalidateWidth {
+                // happens when the device rotates
+                logTrace("invalidateWidth", group: .chatCollectionViewInvalidation)
+                invalidateAll()
+            } else if context.invalidateSpacing {
+                // happens during setup
+                logTrace("invalidateSpacing", group: .chatCollectionViewInvalidation)
+                invalidateAll()
+            } else if context.invalidateMargins {
+                // happens during setup
+                logTrace("invalidateMargins", group: .chatCollectionViewInvalidation)
+                invalidateAll()
+            } else {
+                // something else happened
+                preconditionFailure("Unrecognized custom invalidation context.")
+            }
         } else {
-            //print(context)
-            cache.removeAll()
-            contentSize = nil
+            // something else happened
+            logWarning("Unrecognized invalidation context.", group: .chatCollectionViewInvalidation)
         }
     }
 
@@ -109,7 +132,7 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let attributes: UICollectionViewLayoutAttributes
 
-        if let cachedAttributes = cache[indexPath] {
+        if cache.count > indexPath.item, let cachedAttributes = cache[indexPath.item] {
             attributes = cachedAttributes
         } else {
             //print("generating: \(indexPath)")
@@ -143,7 +166,10 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
             newAttributes.frame = frame
             newAttributes.bounds = size.bounds
 
-            cache[indexPath] = newAttributes
+            while cache.count <= indexPath.item {
+                cache.append(nil)
+            }
+            cache[indexPath.item] = newAttributes
 
             attributes = newAttributes
         }

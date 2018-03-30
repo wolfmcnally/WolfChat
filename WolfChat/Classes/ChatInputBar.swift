@@ -173,7 +173,12 @@ class ChatInputBar: View {
         ]
 
         backgroundView.constrainFrameToFrame()
-        verticalStackView.constrainFrameToFrame()
+        Constraints(
+            verticalStackView.leadingAnchor == safeAreaLayoutGuide.leadingAnchor,
+            verticalStackView.trailingAnchor == safeAreaLayoutGuide.trailingAnchor,
+            verticalStackView.topAnchor == topAnchor,
+            verticalStackView.bottomAnchor == bottomAnchor
+        )
         frameView.constrainFrameToFrame(insets: CGInsets(edgeInsets: frameInsets))
         placeholderLabel.constrainFrameToFrame(insets: CGInsets(edgeInsets: textInsets))
         textView.constrainFrameToFrame(insets: CGInsets(edgeInsets: textInsets))
