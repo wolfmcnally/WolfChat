@@ -12,4 +12,3 @@ public protocol ChatItem {
     func sizeThatFits(_ size: CGSize) -> CGSize
     var alignment: ChatItemAlignment { get }
 }
-

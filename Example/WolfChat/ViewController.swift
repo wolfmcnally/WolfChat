@@ -19,9 +19,9 @@ class ViewController: UIViewController {
         chatView.register(messageClass: ChatPlaceholderItem.self)
         chatView.register(messageClass: ChatTextItem.self)
 
-        chatView.inputBarTopView = inputBarTopView
-        chatView.inputBarLeftView = inputBarLeftView
-        chatView.inputBarRightView = inputBarRightView
+        chatView.setInputBarTopView(inputBarTopView, animated: false)
+        chatView.setInputBarLeftView(inputBarLeftView, animated: false)
+        chatView.setInputBarRightView(inputBarRightView, animated: false)
 
         chatView.shouldReturn = { [unowned self] _ in
             self.send()
@@ -101,19 +101,44 @@ class ViewController: UIViewController {
         .foregroundColor: UIColor.black
     ]
 
+    private func makeAvatarImage(color: UIColor) -> UIImage {
+        let size = CGSize(width: 30, height: 30)
+        return newImage(withSize: size) { context in
+            context.setFillColor(color.cgColor)
+            context.fillEllipse(in: size.bounds)
+        }
+    }
+
+    private lazy var sentAvatarImage = makeAvatarImage(color: UIColor.red.darkened(by: 0.1))
+    private lazy var receivedAvatarImage = makeAvatarImage(color: UIColor.green.darkened(by: 0.3))
+
+    private func makeAvatarView(with image: UIImage) -> UIView {
+        return ImageView(image: image)
+    }
+
+    private func makeSentAvatarView() -> UIView {
+        return makeAvatarView(with: sentAvatarImage)
+    }
+
+    private func makeReceivedAvatarView() -> UIView {
+        return makeAvatarView(with: receivedAvatarImage)
+    }
+
     private func makeSentItem(text: String) -> ChatTextItem {
         let t = text§
         t.setAttributes(sentTextAttributes)
-        var item = ChatTextItem(text: t, style: sentItemStyle)
-        item.alignment = .right
+        let avatarView = makeSentAvatarView()
+        avatarView.constrainSize(to: CGSize(width: 30, height: 30))
+        let item = ChatTextItem(text: t, style: sentItemStyle, alignment: .right, avatarView: avatarView)
         return item
     }
 
     private func makeReceivedItem(text: String) -> ChatTextItem {
         let t = text§
         t.setAttributes(receivedTextAttributes)
-        var item = ChatTextItem(text: t, style: receivedItemStyle)
-        item.alignment = .left
+        let avatarView = makeReceivedAvatarView()
+        avatarView.constrainSize(to: CGSize(width: 30, height: 30))
+        let item = ChatTextItem(text: t, style: receivedItemStyle, alignment: .left, avatarView: avatarView)
         return item
     }
 

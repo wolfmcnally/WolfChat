@@ -100,38 +100,38 @@ class ChatInputBar: View {
         🍒.textColor = .black
     }
 
-    var leftView: UIView? {
-        didSet {
-            leftContainerView.removeAllSubviews()
-            guard let leftView = leftView else { return }
-            leftContainerView => [
-                leftView
-            ]
-            leftView.constrainFrameToFrame()
-        }
+    private(set) var leftView: UIView?
+
+    public func setLeftView(_ view: UIView?, animated: Bool) {
+        leftContainerView.removeAllSubviews()
+        guard let view = view else { return }
+        leftContainerView => [
+            view
+        ]
+        view.constrainFrameToFrame()
     }
 
-    var rightView: UIView? {
-        didSet {
-            rightContainerView.removeAllSubviews()
-            guard let rightView = rightView else { return }
-            rightContainerView => [
-                rightView
-            ]
-            rightView.constrainFrameToFrame()
-        }
+    private(set) var rightView: UIView?
+
+    public func setRightView(_ view: UIView?, animated: Bool) {
+        rightContainerView.removeAllSubviews()
+        guard let view = view else { return }
+        rightContainerView => [
+            view
+        ]
+        view.constrainFrameToFrame()
     }
 
-    var topView: UIView? {
-        didSet {
-            topContainerView.removeAllSubviews()
-            guard let topView = topView else { relayout(animated: true); return }
-            topContainerView => [
-                topView
-            ]
-            topView.constrainFrameToFrame()
-            relayout(animated: true)
-        }
+    private(set) var topView: UIView?
+
+    public func setTopView(_ view: UIView?, animated: Bool) {
+        defer { relayout(animated: animated) }
+        topContainerView.removeAllSubviews()
+        guard let view = view else { return }
+        topContainerView => [
+            view
+        ]
+        view.constrainFrameToFrame()
     }
 
     private lazy var verticalStackView = VerticalStackView()
@@ -235,7 +235,7 @@ class ChatInputBar: View {
 
         guard textViewHeightConstraint.constant != newHeight else { return }
         self.textViewHeightConstraint.constant = newHeight
-        relayout(animated: true)
+        relayout(animated: animated)
     }
 
     private func relayout(animated: Bool) {

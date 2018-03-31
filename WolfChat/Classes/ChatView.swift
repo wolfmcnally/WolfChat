@@ -52,17 +52,26 @@ public class ChatView: View {
 
     public var inputBarLeftView: UIView? {
         get { return inputBarView.leftView }
-        set { inputBarView.leftView = newValue }
+    }
+
+    public func setInputBarLeftView(_ view: UIView?, animated: Bool) {
+        inputBarView.setLeftView(view, animated: animated)
     }
 
     public var inputBarRightView: UIView? {
         get { return inputBarView.rightView }
-        set { inputBarView.rightView = newValue }
+    }
+
+    public func setInputBarRightView(_ view: UIView?, animated: Bool) {
+        inputBarView.setRightView(view, animated: animated)
     }
 
     public var inputBarTopView: UIView? {
         get { return inputBarView.topView }
-        set { inputBarView.topView = newValue }
+    }
+
+    public func setInputBarTopView(_ view: UIView?, animated: Bool) {
+        inputBarView.setTopView(view, animated: animated)
     }
 
     public var inputBarFont: UIFont {
@@ -147,7 +156,6 @@ public class ChatView: View {
 
     public override func layoutSubviews() {
         super.layoutSubviews()
-
         collectionView.contentInset.top = safeAreaInsets.top
     }
 }

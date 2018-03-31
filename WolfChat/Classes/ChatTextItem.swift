@@ -14,10 +14,14 @@ public struct ChatTextItem: ChatItem {
     public let id = UUID()
     public let text: NSAttributedString
     public let style: ChatTextItemStyle
+    public let alignment: ChatItemAlignment
+    public let avatarView: UIView?
 
-    public init(text: NSAttributedString, style: ChatTextItemStyle) {
+    public init(text: NSAttributedString, style: ChatTextItemStyle, alignment: ChatItemAlignment = .right, avatarView: UIView? = nil) {
         self.text = text
         self.style = style
+        self.alignment = alignment
+        self.avatarView = avatarView
         label.attributedText = text
         frameView = ChatFrameView(style: style.frameStyle)
     }
@@ -29,35 +33,44 @@ public struct ChatTextItem: ChatItem {
     }
 
     public func sizeThatFits(_ size: CGSize) -> CGSize {
+        avatarView?.layoutIfNeeded()
+        let avatarSize: CGSize
+        if let avatarView = avatarView {
+            var s = avatarView.frame.size
+            s.width += style.avatarSpacing
+            avatarSize = s
+        } else {
+            avatarSize = .zero
+        }
         let width = size.width
         let textInsets = style.textInsets
         let effectiveWidth = width * style.widthFrac
         let shapeInsets = style.shapeInsets
-        let maxTextWidth = effectiveWidth - textInsets.horizontal - shapeInsets.horizontal
+        let maxTextWidth = effectiveWidth - textInsets.horizontal - shapeInsets.horizontal - avatarSize.width
         let textMaxBounds = CGSize(width: maxTextWidth, height: 10_000).bounds
         let textBounds = label.textRect(forBounds: textMaxBounds, limitedToNumberOfLines: 0)
-        let cellWidth = min(effectiveWidth, textBounds.width) + textInsets.horizontal + shapeInsets.horizontal
-        let cellHeight = textBounds.height + textInsets.vertical + shapeInsets.vertical
+        let cellWidth = min(effectiveWidth, textBounds.width) + textInsets.horizontal + shapeInsets.horizontal + avatarSize.width
+        let cellHeight = max(textBounds.height + textInsets.vertical + shapeInsets.vertical, avatarSize.height)
         let cellSize = CGSize(width: cellWidth, height: cellHeight)
         return cellSize
     }
-
-    public var alignment: ChatItemAlignment = .right
 }
 
 public struct ChatTextItemStyle {
     public let textInsets: UIEdgeInsets
     public let widthFrac: CGFrac
     public let frameStyle: ChatFrameStyle
+    public let avatarSpacing: CGFloat
 
     public var shapeInsets: UIEdgeInsets {
         return frameStyle.shapeInsets
     }
 
-    public init(textInsets: UIEdgeInsets, widthFrac: CGFrac, frameStyle: ChatFrameStyle) {
+    public init(textInsets: UIEdgeInsets, widthFrac: CGFrac, frameStyle: ChatFrameStyle, avatarSpacing: CGFloat = 0) {
         self.textInsets = textInsets
         self.widthFrac = widthFrac
         self.frameStyle = frameStyle
+        self.avatarSpacing = avatarSpacing
     }
 }
 
@@ -78,6 +91,10 @@ open class ChatTextCell: ChatCell {
         return textItem.label
     }
 
+    private var avatarView: UIView? {
+        return textItem.avatarView
+    }
+
     private var textInsets: UIEdgeInsets {
         return textItem.style.textInsets
     }
@@ -89,16 +106,45 @@ open class ChatTextCell: ChatCell {
     open override func prepareForReuse() {
         super.prepareForReuse()
         contentView.removeAllSubviews()
+        stackView.removeAllSubviews()
+        avatarContainerView.removeAllSubviews()
+        textContainerView.removeAllSubviews()
     }
+
+    private lazy var stackView = HorizontalStackView()
+    private lazy var avatarContainerView = VerticalStackView()
+    private lazy var textContainerView = View()
 
     open override func syncToItem() {
         super.syncToItem()
 
         contentView => [
-            frameView,
-            label
+            stackView => [
+                textContainerView => [
+                    frameView,
+                    label
+                ]
+            ]
         ]
 
+        stackView.spacing = textItem.style.avatarSpacing
+
+        if let avatarView = avatarView {
+            avatarContainerView => [
+                View(), // To bottom-align avatar view
+                avatarView
+            ]
+            switch textItem.alignment {
+            case .left:
+                stackView.insertArrangedSubview(avatarContainerView, at: 0)
+            case .right:
+                stackView.addArrangedSubview(avatarContainerView)
+            case .center:
+                preconditionFailure()
+            }
+        }
+
+        stackView.constrainFrameToFrame()
         frameView.constrainFrameToFrame()
         let insets = textInsets + shapeInsets
         label.constrainFrameToFrame(insets: CGInsets(edgeInsets: insets))
