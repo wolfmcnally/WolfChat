@@ -11,7 +11,7 @@ import UIKit
 class ChatCollectionView: CollectionView {
     var messages: [ChatItem] = []
 
-    private lazy var layout = ChatCollectionViewLayout()
+    private let layout = ChatCollectionViewLayout()
 
     var spacing: CGFloat {
         get { return layout.spacing }
