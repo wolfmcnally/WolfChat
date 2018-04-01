@@ -38,11 +38,11 @@ class ViewController: UIViewController {
             self.postItemIfNeeded()
         }
 
-//        view => [
-//            bordersTestView
-//        ]
-//
-//        bordersTestView.constrainCenterToCenter()
+        view => [
+            bordersTestView
+        ]
+
+        bordersTestView.constrainCenterToCenter()
     }
 
     private func setNeedsPostItem() {
@@ -89,23 +89,25 @@ class ViewController: UIViewController {
     }
 
     private lazy var sentFrameOrnaments = CornerOrnaments(cornerRadius: 18) •• { 🍒 in
-        🍒.bottomRight = .bubbleTail(cornerRadius: 18)
+        🍒.bottomRight = .bubbleTail(18)
     }
 
     private lazy var receivedFrameOrnaments = CornerOrnaments(cornerRadius: 18) •• { 🍒 in
-        🍒.bottomLeft = .bubbleTail(cornerRadius: 18)
+        🍒.bottomLeft = .bubbleTail(18)
     }
 
     private lazy var sentBorder = OrnamentedCornersBorder() •• { 🍒 in
         🍒.ornaments = CornerOrnaments(cornerRadius: 18)
-        🍒.ornaments.bottomRight = .bubbleTail(cornerRadius: 18)
+        🍒.ornaments.bottomRight = .bubbleTail(18)
         🍒.fillColor = try! UIColor(string: "#3FACFD")
+        🍒.strokeColor = nil
     }
 
     private lazy var receivedBorder = OrnamentedCornersBorder() •• { 🍒 in
         🍒.ornaments = CornerOrnaments(cornerRadius: 18)
-        🍒.ornaments.bottomLeft = .bubbleTail(cornerRadius: 18)
+        🍒.ornaments.bottomLeft = .bubbleTail(18)
         🍒.fillColor = try! UIColor(string: "#E5E5EA")
+        🍒.strokeColor = nil
     }
 
     private lazy var messageTextInsets = UIEdgeInsets(horizontal: 8, vertical: 4)

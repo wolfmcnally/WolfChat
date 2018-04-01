@@ -63,7 +63,7 @@ public struct ChatTextItemStyle {
     public let avatarSpacing: CGFloat
 
     public var shapeInsets: UIEdgeInsets {
-        return border.makeInsets()
+        return border.insets
     }
 
     public init(textInsets: UIEdgeInsets, widthFrac: CGFrac, border: Border, avatarSpacing: CGFloat = 0) {
