@@ -47,10 +47,8 @@ class ChatInputBar: View {
         effectsView.constrainFrameToFrame()
     }
 
-    private lazy var frameView = FrameView() • { 🍒 in
-        🍒.style = .rounded(cornerRadius: 15)
-        🍒.strokeColor = try! UIColor(string: "#C7C7CC")
-        🍒.fillColor = .white
+    private lazy var borderView = BorderView() • { 🍒 in
+        🍒.border = RoundedCornersBorder(cornerRadius: 15, fillColor: .white, strokeColor: try! UIColor(string: "#C7C7CC"))
     }
 
     private lazy var sendButtonImage = makeSendButtonImage()
@@ -162,7 +160,7 @@ class ChatInputBar: View {
                 horizontalStackView => [
                     leftContainerView,
                     centerView => [
-                        frameView,
+                        borderView,
                         placeholderLabel,
                         textView,
                         sendButton
@@ -179,7 +177,7 @@ class ChatInputBar: View {
             verticalStackView.topAnchor == topAnchor,
             verticalStackView.bottomAnchor == bottomAnchor
         )
-        frameView.constrainFrameToFrame(insets: CGInsets(edgeInsets: frameInsets))
+        borderView.constrainFrameToFrame(insets: CGInsets(edgeInsets: frameInsets))
         placeholderLabel.constrainFrameToFrame(insets: CGInsets(edgeInsets: textInsets))
         textView.constrainFrameToFrame(insets: CGInsets(edgeInsets: textInsets))
         textViewHeightConstraint = textView.constrainHeight(to: 50)
@@ -187,8 +185,8 @@ class ChatInputBar: View {
         font = .systemFont(ofSize: 14)
 
         Constraints(
-            sendButton.trailingAnchor == frameView.trailingAnchor - 4,
-            sendButton.bottomAnchor == frameView.bottomAnchor - 4
+            sendButton.trailingAnchor == borderView.trailingAnchor - 4,
+            sendButton.bottomAnchor == borderView.bottomAnchor - 4
         )
     }
 

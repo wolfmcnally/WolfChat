@@ -13,6 +13,8 @@ import WolfChat
 class ViewController: UIViewController {
     @IBOutlet weak var chatView: ChatView!
 
+    private lazy var bordersTestView = BordersTestView()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -35,6 +37,12 @@ class ViewController: UIViewController {
         needsPostItem = Asynchronizer(delay: 0.5) { [unowned self] in
             self.postItemIfNeeded()
         }
+
+//        view => [
+//            bordersTestView
+//        ]
+//
+//        bordersTestView.constrainCenterToCenter()
     }
 
     private func setNeedsPostItem() {
@@ -80,14 +88,31 @@ class ViewController: UIViewController {
         🍒.backgroundColor = debugColor(when: isDebug, debug: .blue)
     }
 
-    private lazy var sentFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#3FACFD"), shape: .bubble(cornerRadius: 18, tailCorner: .right))
-    private lazy var receivedFrameStyle = ChatFrameStyle(fillColor: UIColor(string: "#E5E5EA"), shape: .bubble(cornerRadius: 18, tailCorner: .left))
+    private lazy var sentFrameOrnaments = CornerOrnaments(cornerRadius: 18) •• { 🍒 in
+        🍒.bottomRight = .bubbleTail(cornerRadius: 18)
+    }
+
+    private lazy var receivedFrameOrnaments = CornerOrnaments(cornerRadius: 18) •• { 🍒 in
+        🍒.bottomLeft = .bubbleTail(cornerRadius: 18)
+    }
+
+    private lazy var sentBorder = OrnamentedCornersBorder() •• { 🍒 in
+        🍒.ornaments = CornerOrnaments(cornerRadius: 18)
+        🍒.ornaments.bottomRight = .bubbleTail(cornerRadius: 18)
+        🍒.fillColor = try! UIColor(string: "#3FACFD")
+    }
+
+    private lazy var receivedBorder = OrnamentedCornersBorder() •• { 🍒 in
+        🍒.ornaments = CornerOrnaments(cornerRadius: 18)
+        🍒.ornaments.bottomLeft = .bubbleTail(cornerRadius: 18)
+        🍒.fillColor = try! UIColor(string: "#E5E5EA")
+    }
 
     private lazy var messageTextInsets = UIEdgeInsets(horizontal: 8, vertical: 4)
     let widthFrac: CGFrac = 0.7
 
-    private lazy var sentItemStyle = ChatTextItemStyle(textInsets: messageTextInsets, widthFrac: widthFrac, frameStyle: sentFrameStyle)
-    private lazy var receivedItemStyle = ChatTextItemStyle(textInsets: messageTextInsets, widthFrac: widthFrac, frameStyle: receivedFrameStyle)
+    private lazy var sentItemStyle = ChatTextItemStyle(textInsets: messageTextInsets, widthFrac: widthFrac, border: sentBorder)
+    private lazy var receivedItemStyle = ChatTextItemStyle(textInsets: messageTextInsets, widthFrac: widthFrac, border: receivedBorder)
 
     private lazy var messageFont = UIFont.systemFont(ofSize: 15)
 
@@ -165,15 +190,17 @@ class ViewController: UIViewController {
 
         chatView.beginEditing()
 
-        addPlaceholderItem(alignment: .right)
-        addPlaceholderItem(alignment: .left)
-        addPlaceholderItem(alignment: .center)
-        addPlaceholderItem(alignment: .right)
-
+//        addPlaceholderItem(alignment: .right)
+//        addPlaceholderItem(alignment: .left)
+//        addPlaceholderItem(alignment: .center)
+//        addPlaceholderItem(alignment: .right)
+//
         for _ in 0 ..< 4 {
             addSentTextItem()
             addReceivedTextItem()
         }
+//
+//        addSentTextItem(text: "Hello, world!")
     }
 
     private func send() {

@@ -23,7 +23,7 @@ public struct ChatTextItem: ChatItem {
         self.alignment = alignment
         self.avatarView = avatarView
         label.attributedText = text
-        frameView = ChatFrameView(style: style.frameStyle)
+        frameView = ChatFrameView(border: style.border)
     }
 
     let frameView: ChatFrameView
@@ -59,17 +59,17 @@ public struct ChatTextItem: ChatItem {
 public struct ChatTextItemStyle {
     public let textInsets: UIEdgeInsets
     public let widthFrac: CGFrac
-    public let frameStyle: ChatFrameStyle
+    public let border: Border
     public let avatarSpacing: CGFloat
 
     public var shapeInsets: UIEdgeInsets {
-        return frameStyle.shapeInsets
+        return border.makeInsets()
     }
 
-    public init(textInsets: UIEdgeInsets, widthFrac: CGFrac, frameStyle: ChatFrameStyle, avatarSpacing: CGFloat = 0) {
+    public init(textInsets: UIEdgeInsets, widthFrac: CGFrac, border: Border, avatarSpacing: CGFloat = 0) {
         self.textInsets = textInsets
         self.widthFrac = widthFrac
-        self.frameStyle = frameStyle
+        self.border = border
         self.avatarSpacing = avatarSpacing
     }
 }
