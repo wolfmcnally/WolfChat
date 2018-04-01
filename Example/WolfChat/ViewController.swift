@@ -13,8 +13,6 @@ import WolfChat
 class ViewController: UIViewController {
     @IBOutlet weak var chatView: ChatView!
 
-    private lazy var bordersTestView = BordersTestView()
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -38,11 +36,11 @@ class ViewController: UIViewController {
             self.postItemIfNeeded()
         }
 
-        view => [
-            bordersTestView
-        ]
-
-        bordersTestView.constrainCenterToCenter()
+//        let bordersTestView = BordersTestView()
+//        view => [
+//            bordersTestView
+//        ]
+//        bordersTestView.constrainCenterToCenter()
     }
 
     private func setNeedsPostItem() {
