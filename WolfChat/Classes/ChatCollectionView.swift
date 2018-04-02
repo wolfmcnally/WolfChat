@@ -8,6 +8,9 @@
 import WolfCore
 import UIKit
 
+/// The UICollectionView that contains the `ChatCell`s that represent `ChatItem`s.
+/// You typically won't directly access the `ChatCollectionView`-- methods to access its
+/// configurable attributes are found on its containing `ChatView`.
 class ChatCollectionView: CollectionView {
     var messages: [ChatItem] = []
 
@@ -18,9 +21,9 @@ class ChatCollectionView: CollectionView {
         set { layout.spacing = newValue }
     }
 
-    var margins: UIEdgeInsets {
-        get { return layout.margins }
-        set { layout.margins = newValue }
+    var verticalInsets: UIEdgeInsets {
+        get { return layout.verticalInsets }
+        set { layout.verticalInsets = newValue }
     }
 
     func addItem(_ item: ChatItem) -> UUID {

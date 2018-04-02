@@ -7,7 +7,9 @@
 
 import WolfCore
 
+/// A minimal sample `ChatItem`.
 public struct ChatPlaceholderItem: ChatItem {
+
     public static let defaultReuseIdentifier = "com.wolfmcnally.ChatPlaceholder"
     public static let cellClass: AnyClass = ChatPlaceholderCell.self
 
@@ -21,22 +23,5 @@ public struct ChatPlaceholderItem: ChatItem {
     }
 
     public var alignment: ChatItemAlignment = .right
-}
-
-open class ChatPlaceholderCell: ChatCell {
-    private lazy var placeholderView = PlaceholderView(title: "😎")
-
-    open override var reuseIdentifier: String? {
-        return ChatPlaceholderItem.defaultReuseIdentifier
-    }
-
-    open override func setup() {
-        super.setup()
-
-        contentView => [
-            placeholderView
-        ]
-
-        placeholderView.constrainFrameToFrame()
-    }
+    public var horizontalInsets = UIEdgeInsets(horizontal: 10, vertical: 0)
 }

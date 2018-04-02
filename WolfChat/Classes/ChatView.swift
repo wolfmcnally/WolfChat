@@ -7,6 +7,7 @@
 
 import WolfCore
 
+/// The main view that contains a scrolling history of the chat.
 public class ChatView: View {
     private lazy var keyboardAvoidantView = KeyboardAvoidantView()
 
@@ -21,9 +22,9 @@ public class ChatView: View {
         set { collectionView.spacing = newValue }
     }
     
-    public var margins: UIEdgeInsets {
-        get { return collectionView.margins }
-        set { collectionView.margins = newValue }
+    public var verticalInsets: UIEdgeInsets {
+        get { return collectionView.verticalInsets }
+        set { collectionView.verticalInsets = newValue }
     }
 
     public func register<T: ChatItem>(messageClass: T.Type) {

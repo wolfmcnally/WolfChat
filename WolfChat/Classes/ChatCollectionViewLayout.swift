@@ -18,6 +18,7 @@ extension UICollectionViewLayoutInvalidationContext {
     }
 }
 
+/// The strategy for laying out the `ChatCell`s in a `ChatCollectionView`.
 class ChatCollectionViewLayout: UICollectionViewLayout {
     class InvalidationContext: UICollectionViewLayoutInvalidationContext {
         var invalidateWidth: Bool = false
@@ -33,7 +34,7 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
         }
     }
 
-    var margins = UIEdgeInsets(all: 10) {
+    var verticalInsets = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0) {
         didSet {
             let context = ChatCollectionViewLayout.InvalidationContext()
             context.invalidateMargins = true
@@ -112,7 +113,7 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
         let lastIndexPath = IndexPath(item: messages.count - 1, section: 0)
         let lastAttributes = layoutAttributesForItem(at: lastIndexPath)!
         let width = contentWidth
-        let height = lastAttributes.frame.maxY + margins.bottom
+        let height = lastAttributes.frame.maxY + verticalInsets.bottom
         contentSize = CGSize(width: width, height: height)
         return contentSize!
     }
@@ -141,23 +142,23 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
                 let previousAttributes = layoutAttributesForItem(at: previousIndexPath)!
                 maxY = previousAttributes.frame.maxY + spacing
             } else {
-                maxY = margins.top
+                maxY = verticalInsets.top
             }
 
             let item = itemAtIndexPath(indexPath)
             let y = maxY
-            let maxWidth = contentWidth
+            let maxWidth = contentWidth - item.horizontalInsets.horizontal
             let preferredSize = item.sizeThatFits(CGSize(width: maxWidth, height: .greatestFiniteMagnitude))
             let width = min(preferredSize.width, maxWidth)
             let size = CGSize(width: width, height: preferredSize.height)
             let x: CGFloat
             switch item.alignment {
             case .left:
-                x = margins.left
+                x = item.horizontalInsets.left
             case .center:
                 x = (maxWidth - width) / 2
             case .right:
-                x = maxWidth - width - margins.right
+                x = contentWidth - width - item.horizontalInsets.right
             }
             let origin = CGPoint(x: x, y: y)
 

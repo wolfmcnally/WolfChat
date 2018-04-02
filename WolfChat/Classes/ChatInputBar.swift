@@ -7,6 +7,7 @@
 
 import WolfCore
 
+/// The view that handles textual and other input to the chat.
 class ChatInputBar: View {
     var shouldReturn: TextView.PredicateBlock? {
         get { return textView.shouldReturn }
