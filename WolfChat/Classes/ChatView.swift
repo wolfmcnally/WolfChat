@@ -36,6 +36,11 @@ public class ChatView: View {
         set { inputBarView.shouldReturn = newValue }
     }
 
+    public var shouldChangeText: ((String, StringRange, String) -> Bool)? {
+        get { return inputBarView.shouldChangeText }
+        set { inputBarView.shouldChangeText = newValue }
+    }
+
     public var onSendButton: Block? {
         get { return inputBarView.onSendButton }
         set { inputBarView.onSendButton = newValue }

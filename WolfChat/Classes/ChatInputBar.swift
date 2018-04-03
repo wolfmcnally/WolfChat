@@ -28,6 +28,7 @@ class ChatInputBar: View {
     }
 
     var onSendButton: Block?
+    var shouldChangeText: ((String, StringRange, String) -> Bool)?
 
     func beginEditing() {
         textView.becomeFirstResponder()
@@ -262,6 +263,12 @@ class ChatInputBar: View {
 }
 
 extension ChatInputBar: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let startText = self.text
+        let range = startText.stringRange
+        return shouldChangeText?(startText, range, text) ?? true
+    }
+
     func textViewDidChange(_ textView: UITextView) {
         syncToText(animated: true)
     }
