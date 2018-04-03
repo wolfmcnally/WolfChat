@@ -3,8 +3,9 @@ use_frameworks!
 
 target 'WolfChat_Example' do
   pod 'WolfChat', :path => '../'
-  # pod 'WolfCore', '~> 2.1'
-  pod 'WolfCore', :path => '../../WolfCore/'
+
+  pod 'WolfCore', '~> 2.2'
+  # pod 'WolfCore', :path => '../../WolfCore/'
 
   target 'WolfChat_Tests' do
     inherit! :search_paths
