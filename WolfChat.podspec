@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'WolfChat'
-  s.version          = '0.1.0'
+  s.version          = '0.2.0'
   s.summary          = 'A framework for creating text chat-style interfaces.'
   s.description      = <<-DESC
 A framework for creating text chat-style interfaces. Architected to be easy to include custom chat items of any design.
@@ -12,7 +12,7 @@ A framework for creating text chat-style interfaces. Architected to be easy to i
   s.source           = { :git => 'https://github.com/wolfmcnally/WolfChat.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/wolfmcnally'
 
-  s.swift_version = '4.0'
+  s.swift_version = '4.1'
 
   s.ios.deployment_target = '11.0'
 
