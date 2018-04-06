@@ -10,7 +10,7 @@
 /// Also knows how to measure for the collection cell that will be created for it.
 /// Frequently contains the views that will be part of the collection view cell, as this
 /// way they can be measured correctly using layout techniques (autolayout or similar).
-public protocol ChatItem {
+public protocol ChatItem: Codable {
     static var defaultReuseIdentifier: String { get }
     static var cellClass: AnyClass { get }
 

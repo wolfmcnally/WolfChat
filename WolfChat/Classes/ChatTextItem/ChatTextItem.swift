@@ -8,7 +8,7 @@
 import WolfCore
 
 /// A fully-featured `ChatItem` used for representing text in a chat.
-open class ChatTextItem: ChatItem, Codable {
+open class ChatTextItem: ChatItem {
     private typealias `Self` = ChatTextItem
 
     public static let defaultReuseIdentifier = "com.wolfmcnally.ChatText"

@@ -15,7 +15,7 @@ open class ChatTextItemStyle {
     public var textAttributes: StringAttributes = [:]
     public var textInsets: UIEdgeInsets = .zero
     public var avatarSpacing: CGFloat = 10
-    public var makeAvatarView: ((String) -> UIView)? = nil
+    public var makeAvatarView: ((String) -> UIView?)? = nil
 
     public init() { }
 }

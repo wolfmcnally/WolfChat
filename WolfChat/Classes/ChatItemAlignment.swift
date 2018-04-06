@@ -6,7 +6,7 @@
 //
 
 /// The alignment of `ChatCell`s within the `ChatCollectionView`.
-public enum ChatItemAlignment {
+public enum ChatItemAlignment: String, Codable {
     case left
     case center
     case right
