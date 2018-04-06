@@ -49,7 +49,7 @@ class ChatInputBar: View {
         effectsView.constrainFrameToFrame()
     }
 
-    private lazy var borderView = BorderView() • { 🍒 in
+    private lazy var borderView = BorderBackgroundView() • { 🍒 in
         🍒.border = RoundedCornersBorder(cornerRadius: 15, fillColor: .white, strokeColor: try! UIColor(string: "#C7C7CC"))
     }
 

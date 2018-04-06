@@ -25,10 +25,10 @@ public struct ChatTextItem: ChatItem {
         self.alignment = alignment
         self.avatarView = avatarView
         label.attributedText = text
-        frameView = BorderView(border: style.border)
+        backgroundView = BorderBackgroundView(border: style.border)
     }
 
-    let frameView: BorderView
+    let backgroundView: BorderBackgroundView
 
     let label = Label() • { 🍒 in
         🍒.numberOfLines = 0

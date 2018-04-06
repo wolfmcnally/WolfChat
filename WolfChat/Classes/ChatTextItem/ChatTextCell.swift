@@ -17,10 +17,6 @@ open class ChatTextCell: ChatCell {
         return item as! ChatTextItem
     }
 
-    private var frameView: View {
-        return textItem.frameView
-    }
-
     private var label: Label {
         return textItem.label
     }
@@ -55,12 +51,13 @@ open class ChatTextCell: ChatCell {
         contentView => [
             stackView => [
                 textContainerView => [
-                    frameView,
+                    textItem.backgroundView,
                     label
                 ]
             ]
         ]
 
+        textItem.backgroundView.constrainFrameToFrame()
         stackView.spacing = textItem.style.avatarSpacing
 
         if let avatarView = avatarView {
@@ -79,7 +76,6 @@ open class ChatTextCell: ChatCell {
         }
 
         stackView.constrainFrameToFrame()
-        frameView.constrainFrameToFrame()
         let insets = textInsets + shapeInsets
         label.constrainFrameToFrame(insets: CGInsets(edgeInsets: insets))
     }
