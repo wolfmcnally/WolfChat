@@ -8,20 +8,14 @@
 import WolfCore
 
 /// Specifies the visual style of a `ChatTextItem`.
-public struct ChatTextItemStyle {
-    public let textInsets: UIEdgeInsets
-    public let widthFrac: CGFrac
-    public let border: Border
-    public let avatarSpacing: CGFloat
+open class ChatTextItemStyle {
+    public var alignment: ChatItemAlignment = .right
+    public var widthFrac: CGFrac = 0
+    public var border: Border = RectBorder()
+    public var textAttributes: StringAttributes = [:]
+    public var textInsets: UIEdgeInsets = .zero
+    public var avatarSpacing: CGFloat = 10
+    public var makeAvatarView: ((String) -> UIView)? = nil
 
-    public var shapeInsets: UIEdgeInsets {
-        return border.insets
-    }
-
-    public init(textInsets: UIEdgeInsets, widthFrac: CGFrac, border: Border, avatarSpacing: CGFloat = 0) {
-        self.textInsets = textInsets
-        self.widthFrac = widthFrac
-        self.border = border
-        self.avatarSpacing = avatarSpacing
-    }
+    public init() { }
 }

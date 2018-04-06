@@ -29,8 +29,8 @@ open class ChatTextCell: ChatCell {
         return textItem.style.textInsets
     }
 
-    private var shapeInsets: UIEdgeInsets {
-        return textItem.style.shapeInsets
+    private var borderInsets: UIEdgeInsets {
+        return textItem.style.border.insets
     }
 
     open override func prepareForReuse() {
@@ -76,7 +76,7 @@ open class ChatTextCell: ChatCell {
         }
 
         stackView.constrainFrameToFrame()
-        let insets = textInsets + shapeInsets
+        let insets = textInsets + borderInsets
         label.constrainFrameToFrame(insets: CGInsets(edgeInsets: insets))
     }
 }

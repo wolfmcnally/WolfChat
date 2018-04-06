@@ -14,6 +14,7 @@ public struct ChatPlaceholderItem: ChatItem {
     public static let cellClass: AnyClass = ChatPlaceholderCell.self
 
     public let id = UUID()
+    public let date = Date()
 
     public init() {
     }
