@@ -20,17 +20,17 @@ class AppChatState: ChatState {
         }
     }
 
-    public override class func load(from data: Data) -> AppChatState {
+    public override class func load(from data: Data) throws -> AppChatState {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        return try! decoder.decode(AppChatState.self, from: data)
+        return try decoder.decode(AppChatState.self, from: data)
     }
 
-    public override static func load(from url: URL) -> AppChatState {
+    public override static func load(from url: URL) throws -> AppChatState {
         guard FileManager.default.isReadableFile(atPath: url.path) else {
             return AppChatState(items: [])
         }
-        let data = try! Data(contentsOf: url)
-        return load(from: data)
+        let data = try Data(contentsOf: url)
+        return try load(from: data)
     }
 }

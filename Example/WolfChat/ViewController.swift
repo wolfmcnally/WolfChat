@@ -44,13 +44,23 @@ class ViewController: UIViewController {
     private let saveURL = documentsDirectory.appendingPathComponent("ChatItems.json")
 
     private func saveItems() {
-        let state = AppChatState(items: chatView.items)
-        state.save(to: saveURL)
+        do {
+            let state = AppChatState(items: chatView.items)
+            try state.save(to: saveURL)
+            //print("saved \(chatView.items.count) items")
+        } catch {
+            logError(error)
+        }
     }
 
     private func loadItems() {
-        let state = AppChatState.load(from: saveURL)
-        chatView.items = state.items
+        do {
+            //print(saveURL)
+            let state = try AppChatState.load(from: saveURL)
+            chatView.items = state.items
+        } catch {
+            logError(error)
+        }
     }
 
     private func setNeedsPostItem() {
@@ -98,7 +108,7 @@ class ViewController: UIViewController {
     }
 
     private func addPlaceholderItem(alignment: ChatItemAlignment) {
-        let item = ChatPlaceholderItem(date: Date(), id: UUID(), alignment: alignment)
+        let item = ChatPlaceholderItem(date: Date(), id: UUID(), sender: "nobody", alignment: alignment)
         addItem(item)
     }
 

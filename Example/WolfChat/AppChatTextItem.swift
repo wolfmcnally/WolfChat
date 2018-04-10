@@ -88,7 +88,7 @@ class AppChatTextItem: ChatTextItem {
 
     init(sender: String, id: UUID = UUID(), date: Date = Date(), text: String) {
         let style = Self.styleForSender(sender)
-        super.init(date: date, id: id, style: style, sender: sender, text: text)
+        super.init(date: date, id: id, sender: sender, style: style, text: text)
     }
 
     required init(from decoder: Decoder) throws {

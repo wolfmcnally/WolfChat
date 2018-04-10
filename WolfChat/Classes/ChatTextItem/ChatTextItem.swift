@@ -9,8 +9,6 @@ import WolfCore
 
 /// A fully-featured `ChatItem` used for representing text in a chat.
 open class ChatTextItem: ChatItem {
-    private typealias `Self` = ChatTextItem
-
     open override class var identifier: String { return "WolfChat.ChatText" }
     open override class var cellClass: AnyClass { return ChatTextCell.self }
 
@@ -23,12 +21,10 @@ open class ChatTextItem: ChatItem {
     var backgroundView: BorderBackgroundView!
 
     enum CodingKeys: String, CodingKey {
-        case sender
         case text
         case attributedText
     }
 
-    public private(set) var sender: String!
     private var _text: String?
     private var _attributedText: NSAttributedString?
 
@@ -52,13 +48,12 @@ open class ChatTextItem: ChatItem {
         return NSAttributedString()
     }
 
-    private func setup(style: ChatTextItemStyle, sender: String, text: String?, attributedText: NSAttributedString?) {
+    private func setup(style: ChatTextItemStyle, text: String?, attributedText: NSAttributedString?) {
         alignment = style.alignment
         horizontalInsets = UIEdgeInsets(horizontal: 10, vertical: 0)
         self.style = style
         self.avatarView = style.makeAvatarView?(sender)
         self.backgroundView = BorderBackgroundView(border: style.border)
-        self.sender = sender
         assert(text != nil || attributedText != nil)
         self._text = text
         self._attributedText = attributedText
@@ -69,38 +64,39 @@ open class ChatTextItem: ChatItem {
         🍒.numberOfLines = 0
     }
 
-    public init(date: Date, id: UUID, style: ChatTextItemStyle, sender: String, text: String? = nil, attributedText: NSAttributedString? = nil) {
-        super.init(date: date, id: id)
-        setup(style: style, sender: sender, text: text, attributedText: attributedText)
+    public init(date: Date, id: UUID, sender: String, style: ChatTextItemStyle, text: String? = nil, attributedText: NSAttributedString? = nil) {
+        super.init(date: date, id: id, sender: sender)
+        setup(style: style, text: text, attributedText: attributedText)
     }
 
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
-        let container = decoder[CodingKeys.self]
-        let sender: String = container[.sender]!
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
         var text: String? = nil
         var attributedText: NSAttributedString? = nil
 
         if container.contains(.attributedText) {
-            let data: Data = container[.attributedText]!
-            attributedText = try NSAttributedString(data: data, options: [:], documentAttributes: nil)
+            let data = try container.decode(Data.self, forKey: .attributedText)
+            let documentAttributes: [NSAttributedString.DocumentAttributeKey: Any]? = [.documentType: NSAttributedString.DocumentType.rtf]
+            var dict: NSDictionary? = documentAttributes as NSDictionary?
+            attributedText = try NSAttributedString(data: data, options: [:], documentAttributes: &dict)
         } else {
-            text = container[.text]!
+            text = try container.decode(String.self, forKey: .text)
         }
 
         let style = type(of: self).styleForSender(sender)
-        setup(style: style, sender: sender, text: text, attributedText: attributedText)
+        setup(style: style, text: text, attributedText: attributedText)
     }
 
     open override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
-        var container = encoder[CodingKeys.self]
-        container[.sender] = sender
+        var container = encoder.container(keyedBy: CodingKeys.self)
         if let attributedText = _attributedText {
-            container[.attributedText] = try attributedText.data(from: attributedText.string.nsRange, documentAttributes: [:])
+            let data = try attributedText.data(from: attributedText.string.nsRange, documentAttributes: [.documentType : NSAttributedString.DocumentType.rtf])
+            try container.encode(data, forKey: .attributedText)
         } else {
-            container[.text] = text
+            try container.encode(text, forKey: .text)
         }
     }
 

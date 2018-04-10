@@ -16,8 +16,8 @@ public class ChatPlaceholderItem: ChatItem {
         case alignment
     }
 
-    public init(date: Date, id: UUID, alignment: ChatItemAlignment) {
-        super.init(date: date, id: id)
+    public init(date: Date, id: UUID, sender: String, alignment: ChatItemAlignment) {
+        super.init(date: date, id: id, sender: sender)
         self.alignment = alignment
         setup()
     }
@@ -32,14 +32,14 @@ public class ChatPlaceholderItem: ChatItem {
 
     public required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
-        let container = decoder[CodingKeys.self]
-        alignment = container[.alignment]!
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        alignment = try container.decode(ChatItemAlignment.self, forKey: .alignment)
         setup()
     }
 
     public override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
-        var container = encoder[CodingKeys.self]
-        container[.alignment] = alignment
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(alignment, forKey: .alignment)
     }
 }
