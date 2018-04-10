@@ -12,7 +12,7 @@ open class ChatPlaceholderCell: ChatCell {
     private lazy var placeholderView = PlaceholderView(title: "😎")
 
     open override var reuseIdentifier: String? {
-        return ChatPlaceholderItem.defaultReuseIdentifier
+        return ChatPlaceholderItem.identifier
     }
 
     open override func setup() {

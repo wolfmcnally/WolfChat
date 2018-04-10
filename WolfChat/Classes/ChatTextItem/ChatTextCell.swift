@@ -10,7 +10,7 @@ import WolfCore
 /// A fully-featured `ChatCell` used for representing text in a chat.
 open class ChatTextCell: ChatCell {
     open override var reuseIdentifier: String? {
-        return ChatTextItem.defaultReuseIdentifier
+        return ChatTextItem.identifier
     }
 
     private var textItem: ChatTextItem {

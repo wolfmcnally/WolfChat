@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0373041F207CC898002F0537 /* AppChatState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0373041E207CC898002F0537 /* AppChatState.swift */; };
 		03BDE14C2077710A006A8385 /* AppChatTextItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BDE14B2077710A006A8385 /* AppChatTextItem.swift */; };
 		1AD114BC7445B6CB557AA9B1 /* Pods_WolfChat_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40B4E4E4BEA5AB0A1ED916E8 /* Pods_WolfChat_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -30,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		021CA0DBB1C9AD0C1A61F8ED /* Pods-WolfChat_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WolfChat_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-WolfChat_Tests/Pods-WolfChat_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		0373041E207CC898002F0537 /* AppChatState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppChatState.swift; sourceTree = "<group>"; };
 		03BDE14B2077710A006A8385 /* AppChatTextItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppChatTextItem.swift; sourceTree = "<group>"; };
 		303CB58F9ECDBFA23C5C7300 /* Pods-WolfChat_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WolfChat_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-WolfChat_Example/Pods-WolfChat_Example.release.xcconfig"; sourceTree = "<group>"; };
 		3480C1186DE8F3CF0A831182 /* Pods-WolfChat_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WolfChat_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WolfChat_Tests/Pods-WolfChat_Tests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				03BDE14B2077710A006A8385 /* AppChatTextItem.swift */,
+				0373041E207CC898002F0537 /* AppChatState.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
@@ -174,7 +177,6 @@
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
 				55BD1D45E2C5BF2BC1C70846 /* [CP] Embed Pods Frameworks */,
-				61C6643B1DB6D824A16036B3 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -193,8 +195,6 @@
 				607FACE11AFB9204008FA782 /* Sources */,
 				607FACE21AFB9204008FA782 /* Frameworks */,
 				607FACE31AFB9204008FA782 /* Resources */,
-				BBBFA730A6099C3C4679445B /* [CP] Embed Pods Frameworks */,
-				AF2DB6D0853D17DDBFAD06B3 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -307,51 +307,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WolfChat_Example/Pods-WolfChat_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		61C6643B1DB6D824A16036B3 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WolfChat_Example/Pods-WolfChat_Example-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AF2DB6D0853D17DDBFAD06B3 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WolfChat_Tests/Pods-WolfChat_Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BBBFA730A6099C3C4679445B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WolfChat_Tests/Pods-WolfChat_Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		C1F01D49269AB9CB9C5D1BDD /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -380,6 +335,7 @@
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				03BDE14C2077710A006A8385 /* AppChatTextItem.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				0373041F207CC898002F0537 /* AppChatState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

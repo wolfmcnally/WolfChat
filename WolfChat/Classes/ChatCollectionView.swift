@@ -12,9 +12,11 @@ import UIKit
 /// You typically won't directly access the `ChatCollectionView`-- methods to access its
 /// configurable attributes are found on its containing `ChatView`.
 class ChatCollectionView: CollectionView {
-    var messages: [ChatItem] = []
+    private(set) var items: [ChatItem] = []
 
     private let layout = ChatCollectionViewLayout()
+
+    var itemLimit: Int?
 
     var spacing: CGFloat {
         get { return layout.spacing }
@@ -26,27 +28,41 @@ class ChatCollectionView: CollectionView {
         set { layout.verticalInsets = newValue }
     }
 
+    func setItems(_ items: [ChatItem]) {
+        self.items = items
+        reloadData()
+    }
+
     func addItem(_ item: ChatItem) -> UUID {
-        let indexPath = IndexPath(item: messages.count, section: 0)
-        messages.append(item)
-        if self.messages.count == 1 {
-            self.reloadData()
+        let indexPath = IndexPath(item: items.count, section: 0)
+        items.append(item)
+        if items.count == 1 {
+            reloadData()
         } else {
-//            dispatchAnimated(duration: 0.2) {
-                self.performBatchUpdates( {
-                    self.insertItems(at: [indexPath])
-                }, completion: { _ in
-                    self.scrollToBottom(animated: true)
-                } )
-//            }.run()
+            performBatchUpdates( {
+                self.insertItems(at: [indexPath])
+            }, completion: { _ in
+                self.scrollToBottom(animated: true)
+            } )
+
+            enforceItemLimit()
         }
         return item.id
     }
 
+    func enforceItemLimit() {
+        guard let itemLimit = itemLimit, items.count > itemLimit else { return }
+        removeItem(at: IndexPath(item: 0, section: 0))
+    }
+
     func removeItem(id: UUID) {
-        let index = messages.index(where: { $0.id == id })!
+        let index = items.index(where: { $0.id == id })!
         let indexPath = IndexPath(item: index, section: 0)
-        self.messages.remove(at: index)
+        removeItem(at: indexPath)
+    }
+
+    func removeItem(at indexPath: IndexPath) {
+        self.items.remove(at: indexPath.item)
         performBatchUpdates({
             self.deleteItems(at: [indexPath])
             let context = ChatCollectionViewLayout.InvalidationContext()
@@ -73,7 +89,7 @@ class ChatCollectionView: CollectionView {
     }
 
     func itemAtIndexPath(_ indexPath: IndexPath) -> ChatItem {
-        return messages[indexPath.item]
+        return items[indexPath.item]
     }
 
     private var lastWidth: CGFloat?
@@ -92,13 +108,13 @@ class ChatCollectionView: CollectionView {
 
 extension ChatCollectionView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let count = messages.count
+        let count = items.count
         return count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let item = itemAtIndexPath(indexPath)
-        let reuseIdentifier = type(of: item).defaultReuseIdentifier
+        let reuseIdentifier = type(of: item).identifier
         let cell = dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ChatCell
         cell.item = item
         return cell

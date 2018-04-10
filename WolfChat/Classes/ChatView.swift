@@ -17,6 +17,16 @@ public class ChatView: View {
 
     private lazy var inputBarView = ChatInputBar()
 
+    public var items: [ChatItem] {
+        get { return collectionView.items }
+        set { collectionView.setItems(newValue) }
+    }
+
+    public var itemLimit: Int? {
+        get { return collectionView.itemLimit }
+        set { collectionView.itemLimit = newValue }
+    }
+
     public var spacing: CGFloat {
         get { return collectionView.spacing }
         set { collectionView.spacing = newValue }
@@ -27,8 +37,8 @@ public class ChatView: View {
         set { collectionView.verticalInsets = newValue }
     }
 
-    public func register<T: ChatItem>(messageClass: T.Type) {
-        collectionView.register(messageClass.cellClass, forCellWithReuseIdentifier: messageClass.defaultReuseIdentifier)
+    public func register<T: ChatItem>(itemClass: T.Type) {
+        collectionView.register(itemClass.cellClass, forCellWithReuseIdentifier: itemClass.identifier)
     }
 
     public var shouldReturn: TextView.PredicateBlock? {

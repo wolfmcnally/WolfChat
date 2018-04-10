@@ -11,11 +11,16 @@ DEPENDENCIES:
   - WolfChat (from `../`)
   - WolfCore (from `../../WolfCore/`)
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - CommonCryptoModule
+    - SwiftLint
+
 EXTERNAL SOURCES:
   WolfChat:
-    :path: ../
+    :path: "../"
   WolfCore:
-    :path: ../../WolfCore/
+    :path: "../../WolfCore/"
 
 SPEC CHECKSUMS:
   CommonCryptoModule: 63a68b57abed79655b3a01011419bf037a05b0a0
@@ -25,4 +30,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: bb6dc7a5cdd639a5b827bc5458e55f9edaaca00a
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

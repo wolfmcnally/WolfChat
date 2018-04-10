@@ -16,8 +16,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        chatView.register(messageClass: ChatPlaceholderItem.self)
-        chatView.register(messageClass: ChatTextItem.self)
+        chatView.itemLimit = 20
+
+        chatView.register(itemClass: ChatPlaceholderItem.self)
+        chatView.register(itemClass: AppChatTextItem.self)
 
         chatView.setInputBarTopView(inputBarTopView, animated: false)
         chatView.setInputBarLeftView(inputBarLeftView, animated: false)
@@ -35,6 +37,20 @@ class ViewController: UIViewController {
         needsPostItem = Asynchronizer(delay: 0.5) { [unowned self] in
             self.postItemIfNeeded()
         }
+
+        loadItems()
+    }
+
+    private let saveURL = documentsDirectory.appendingPathComponent("ChatItems.json")
+
+    private func saveItems() {
+        let state = AppChatState(items: chatView.items)
+        state.save(to: saveURL)
+    }
+
+    private func loadItems() {
+        let state = AppChatState.load(from: saveURL)
+        chatView.items = state.items
     }
 
     private func setNeedsPostItem() {
@@ -51,6 +67,7 @@ class ViewController: UIViewController {
 
     private func postItem(_ item: ChatItem) {
         chatView.addItem(item)
+        saveItems()
     }
 
     private func postItemIfNeeded() {
@@ -81,8 +98,7 @@ class ViewController: UIViewController {
     }
 
     private func addPlaceholderItem(alignment: ChatItemAlignment) {
-        var item = ChatPlaceholderItem()
-        item.alignment = alignment
+        let item = ChatPlaceholderItem(date: Date(), id: UUID(), alignment: alignment)
         addItem(item)
     }
 
@@ -101,19 +117,17 @@ class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        chatView.beginEditing()
-
-//        addPlaceholderItem(alignment: .right)
-//        addPlaceholderItem(alignment: .left)
-//        addPlaceholderItem(alignment: .center)
-//        addPlaceholderItem(alignment: .right)
-//
-        for _ in 0 ..< 4 {
-            addSentTextItem()
-            addReceivedTextItem()
+        if chatView.items.count == 0 {
+            addPlaceholderItem(alignment: .right)
+            addPlaceholderItem(alignment: .left)
+            addPlaceholderItem(alignment: .center)
+            for _ in 0 ..< 4 {
+                addSentTextItem()
+                addReceivedTextItem()
+            }
+        } else {
+            chatView.scrollToBottom(animated: false)
         }
-//
-//        addSentTextItem(text: "Hello, world!")
     }
 
     private func send() {

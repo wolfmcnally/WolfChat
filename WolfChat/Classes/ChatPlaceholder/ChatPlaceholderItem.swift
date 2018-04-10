@@ -8,27 +8,38 @@
 import WolfCore
 
 /// A minimal sample `ChatItem`.
-public struct ChatPlaceholderItem: ChatItem {
+public class ChatPlaceholderItem: ChatItem {
+    public override class var identifier: String { return "WolfChat.ChatPlaceholder" }
+    public override class var cellClass: AnyClass { return ChatPlaceholderCell.self }
 
-    public static let defaultReuseIdentifier = "com.wolfmcnally.ChatPlaceholder"
-    public static let cellClass: AnyClass = ChatPlaceholderCell.self
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case date
+    private enum CodingKeys: String, CodingKey {
         case alignment
     }
 
-    public let id = UUID()
-    public let date = Date()
-
-    public init() {
+    public init(date: Date, id: UUID, alignment: ChatItemAlignment) {
+        super.init(date: date, id: id)
+        self.alignment = alignment
+        setup()
     }
 
-    public func sizeThatFits(_ size: CGSize) -> CGSize {
+    private func setup() {
+        horizontalInsets = UIEdgeInsets(horizontal: 10, vertical: 0)
+    }
+
+    public override func sizeThatFits(_ size: CGSize) -> CGSize {
         return CGSize(width: size.width * 0.2, height: 50)
     }
 
-    public var alignment: ChatItemAlignment = .right
-    public var horizontalInsets = UIEdgeInsets(horizontal: 10, vertical: 0)
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+        let container = decoder[CodingKeys.self]
+        alignment = container[.alignment]!
+        setup()
+    }
+
+    public override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
+        var container = encoder[CodingKeys.self]
+        container[.alignment] = alignment
+    }
 }

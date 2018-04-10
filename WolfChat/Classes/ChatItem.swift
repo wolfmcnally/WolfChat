@@ -10,14 +10,40 @@
 /// Also knows how to measure for the collection cell that will be created for it.
 /// Frequently contains the views that will be part of the collection view cell, as this
 /// way they can be measured correctly using layout techniques (autolayout or similar).
-public protocol ChatItem: Codable {
-    static var defaultReuseIdentifier: String { get }
-    static var cellClass: AnyClass { get }
+open class ChatItem: Codable {
+    open class var identifier: String { fatalError() }
+    open class var cellClass: AnyClass { fatalError() }
 
-    var date: Date { get }
-    var id: UUID { get }
-    
-    func sizeThatFits(_ size: CGSize) -> CGSize
-    var alignment: ChatItemAlignment { get }
-    var horizontalInsets: UIEdgeInsets { get }
+    public var identifier: String { return type(of: self).identifier }
+    public let date: Date
+    public let id: UUID
+
+    private enum CodingKeys: String, CodingKey {
+        case identifier
+        case id
+        case date
+    }
+
+    public init(date: Date, id: UUID) {
+        self.date = date
+        self.id = id
+    }
+
+    open func sizeThatFits(_ size: CGSize) -> CGSize { fatalError() }
+    public var alignment: ChatItemAlignment = .right
+    public var horizontalInsets: UIEdgeInsets = .zero
+
+    public required init(from decoder: Decoder) throws {
+        let container = decoder[CodingKeys.self]
+        id = container[.id]!
+        date = container[.date]!
+        assert(container[.identifier]! == identifier)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder[CodingKeys.self]
+        container[.identifier] = identifier
+        container[.id] = id
+        container[.date] = date
+    }
 }

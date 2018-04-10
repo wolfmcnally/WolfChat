@@ -53,8 +53,8 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
         return collectionView as! ChatCollectionView
     }
 
-    private var messages: [ChatItem] {
-        return chatCollectionView.messages
+    private var items: [ChatItem] {
+        return chatCollectionView.items
     }
 
     private func invalidateAll() {
@@ -63,6 +63,7 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
     }
 
     override func invalidateLayout(with context: UICollectionViewLayoutInvalidationContext) {
+        //logger?.setGroup(.chatCollectionViewInvalidation)
         super.invalidateLayout(with: context)
         if context.invalidateEverything {
             // happens on reloadData()
@@ -108,9 +109,9 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
 
     override var collectionViewContentSize: CGSize {
         guard contentSize == nil else { return contentSize! }
-        guard messages.count > 0 else { return .zero }
+        guard items.count > 0 else { return .zero }
 
-        let lastIndexPath = IndexPath(item: messages.count - 1, section: 0)
+        let lastIndexPath = IndexPath(item: items.count - 1, section: 0)
         let lastAttributes = layoutAttributesForItem(at: lastIndexPath)!
         let width = contentWidth
         let height = lastAttributes.frame.maxY + verticalInsets.bottom
@@ -120,7 +121,7 @@ class ChatCollectionViewLayout: UICollectionViewLayout {
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         var intersectingAttributes = [UICollectionViewLayoutAttributes]()
-        for item in 0 ..< messages.count {
+        for item in 0 ..< items.count {
             let indexPath = IndexPath(item: item, section: 0)
             let attributes = layoutAttributesForItem(at: indexPath)!
             if attributes.frame.intersects(rect) {

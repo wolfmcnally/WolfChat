@@ -11,24 +11,26 @@ import WolfCore
 open class ChatTextItem: ChatItem {
     private typealias `Self` = ChatTextItem
 
-    public static let defaultReuseIdentifier = "com.wolfmcnally.ChatText"
-    public static let cellClass: AnyClass = ChatTextCell.self
-    public let style: ChatTextItemStyle
+    open override class var identifier: String { return "WolfChat.ChatText" }
+    open override class var cellClass: AnyClass { return ChatTextCell.self }
+
+    open class func styleForSender(_ sender: String) -> ChatTextItemStyle {
+        fatalError("Override in subclass")
+    }
+
+    public private(set) var style: ChatTextItemStyle!
+    public private(set) var avatarView: UIView?
+    var backgroundView: BorderBackgroundView!
 
     enum CodingKeys: String, CodingKey {
-        case id
-        case date
         case sender
         case text
         case attributedText
     }
 
-    public let id: UUID
-    public let date: Date
-    public let sender: String
-
-    private let _text: String?
-    private let _attributedText: NSAttributedString?
+    public private(set) var sender: String!
+    private var _text: String?
+    private var _attributedText: NSAttributedString?
 
     public var text: String {
         if let attributedText = _attributedText {
@@ -50,40 +52,31 @@ open class ChatTextItem: ChatItem {
         return NSAttributedString()
     }
 
-    public var alignment: ChatItemAlignment {
-        return style.alignment
+    private func setup(style: ChatTextItemStyle, sender: String, text: String?, attributedText: NSAttributedString?) {
+        alignment = style.alignment
+        horizontalInsets = UIEdgeInsets(horizontal: 10, vertical: 0)
+        self.style = style
+        self.avatarView = style.makeAvatarView?(sender)
+        self.backgroundView = BorderBackgroundView(border: style.border)
+        self.sender = sender
+        assert(text != nil || attributedText != nil)
+        self._text = text
+        self._attributedText = attributedText
+        label.attributedText = self.attributedText
     }
-
-    public var horizontalInsets = UIEdgeInsets(horizontal: 10, vertical: 0)
-    public let avatarView: UIView?
-
-    let backgroundView: BorderBackgroundView
 
     let label = Label() • { 🍒 in
         🍒.numberOfLines = 0
     }
 
-    open class func styleForSender(_ sender: String) -> ChatTextItemStyle {
-        fatalError("Override in subclass")
+    public init(date: Date, id: UUID, style: ChatTextItemStyle, sender: String, text: String? = nil, attributedText: NSAttributedString? = nil) {
+        super.init(date: date, id: id)
+        setup(style: style, sender: sender, text: text, attributedText: attributedText)
     }
 
-    public init(style: ChatTextItemStyle, id: UUID, date: Date, sender: String, text: String? = nil, attributedText: NSAttributedString? = nil) {
-        assert(text != nil || attributedText != nil)
-        self.style = style
-        self.id = id
-        self.date = date
-        self.sender = sender
-        self._text = text
-        self._attributedText = attributedText
-        self.avatarView = style.makeAvatarView?(sender)
-        self.backgroundView = BorderBackgroundView(border: style.border)
-        label.attributedText = self.attributedText
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
         let container = decoder[CodingKeys.self]
-        let id: UUID = container[.id]!
-        let date: Date = container[.date]!
         let sender: String = container[.sender]!
 
         var text: String? = nil
@@ -96,14 +89,13 @@ open class ChatTextItem: ChatItem {
             text = container[.text]!
         }
 
-        let style = Self.styleForSender(sender)
-        self.init(style: style, id: id, date: date, sender: sender, text: text, attributedText: attributedText)
+        let style = type(of: self).styleForSender(sender)
+        setup(style: style, sender: sender, text: text, attributedText: attributedText)
     }
 
-    public func encode(to encoder: Encoder) throws {
+    open override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
         var container = encoder[CodingKeys.self]
-        container[.id] = id
-        container[.date] = date
         container[.sender] = sender
         if let attributedText = _attributedText {
             container[.attributedText] = try attributedText.data(from: attributedText.string.nsRange, documentAttributes: [:])
@@ -112,7 +104,7 @@ open class ChatTextItem: ChatItem {
         }
     }
 
-    public func sizeThatFits(_ size: CGSize) -> CGSize {
+    open override func sizeThatFits(_ size: CGSize) -> CGSize {
         avatarView?.layoutIfNeeded()
         let avatarSize: CGSize
         if let avatarView = avatarView {
