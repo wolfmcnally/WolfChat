@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'WolfChat'
-  s.version          = '0.2.3'
+  s.version          = '0.2.4'
   s.summary          = 'A framework for creating text chat-style interfaces.'
   s.description      = <<-DESC
 A framework for creating text chat-style interfaces. Architected to be easy to include custom chat items of any design.
